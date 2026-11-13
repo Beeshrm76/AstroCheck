@@ -34,9 +34,9 @@ def query_ai_model(
             payload = {
                 "system_instruction": {"parts": [{"text": system_prompt}]},
                 "contents": [{"parts": [{"text": full_prompt}]}],
-                "generationConfig": {"temperature": 0.7, "maxOutputTokens": 3000}
+                "generationConfig": {"temperature": 0.7, "maxOutputTokens": 8192}
             }
-            res = requests.post(url, json=payload, timeout=60)
+            res = requests.post(url, json=payload, timeout=90)
             if res.status_code != 200:
                 return {"error": f"Gemini Error ({res.status_code}): {res.text}"}
             data = res.json()
@@ -57,9 +57,10 @@ def query_ai_model(
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": full_prompt}
                 ],
-                "temperature": 0.7
+                "temperature": 0.7,
+                "max_tokens": 8192
             }
-            res = requests.post(url, headers=headers, json=payload, timeout=60)
+            res = requests.post(url, headers=headers, json=payload, timeout=90)
             if res.status_code != 200:
                 return {"error": f"OpenAI Error ({res.status_code}): {res.text}"}
             data = res.json()
@@ -77,11 +78,11 @@ def query_ai_model(
             }
             payload = {
                 "model": selected_model,
-                "max_tokens": 3000,
+                "max_tokens": 8192,
                 "system": system_prompt,
                 "messages": [{"role": "user", "content": full_prompt}]
             }
-            res = requests.post(url, headers=headers, json=payload, timeout=60)
+            res = requests.post(url, headers=headers, json=payload, timeout=90)
             if res.status_code != 200:
                 return {"error": f"Anthropic Error ({res.status_code}): {res.text}"}
             data = res.json()
@@ -102,9 +103,10 @@ def query_ai_model(
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": full_prompt}
                 ],
-                "temperature": 0.7
+                "temperature": 0.7,
+                "max_tokens": 8192
             }
-            res = requests.post(url, headers=headers, json=payload, timeout=60)
+            res = requests.post(url, headers=headers, json=payload, timeout=90)
             if res.status_code != 200:
                 return {"error": f"Groq Error ({res.status_code}): {res.text}"}
             data = res.json()
@@ -126,9 +128,11 @@ def query_ai_model(
                 "messages": [
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": full_prompt}
-                ]
+                ],
+                "temperature": 0.7,
+                "max_tokens": 8192
             }
-            res = requests.post(url, headers=headers, json=payload, timeout=60)
+            res = requests.post(url, headers=headers, json=payload, timeout=90)
             if res.status_code != 200:
                 return {"error": f"OpenRouter Error ({res.status_code}): {res.text}"}
             data = res.json()
@@ -159,7 +163,8 @@ def query_ai_model(
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": full_prompt}
                 ],
-                "temperature": 0.7
+                "temperature": 0.7,
+                "max_tokens": 8192
             }
             res = requests.post(endpoint, headers=headers, json=payload, timeout=60)
             if res.status_code != 200:
