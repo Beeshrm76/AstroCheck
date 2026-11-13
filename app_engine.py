@@ -1032,6 +1032,19 @@ def calculate_chart(
     ]
 
     # Generate the Exportable Markdown Dossier
+    # First, compute extended timeline & synthesis
+    extended_data = compute_extended_timeline_and_synthesis(
+        birth_year=utc_instant.year,
+        dashas=jyotisha_data.get('dashas', []),
+        western_data=western_data,
+        bazi_data=bazi_data,
+        jyotisha_planets=jyotisha_planets
+    )
+    timeline_2026_2040 = extended_data['timeline_2026_2040']
+    biggest_strengths = extended_data['strengths']
+    biggest_weaknesses = extended_data['weaknesses']
+    past_milestones = extended_data['past_milestones']
+
     lat_cardinal = f"{abs(latitude):.5f}° {'N' if latitude >= 0 else 'S'}"
     lon_cardinal = f"{abs(longitude):.5f}° {'E' if longitude >= 0 else 'W'}"
 
@@ -1119,8 +1132,91 @@ def calculate_chart(
     export_markdown += """
 ---
 
-## 4. INSTRUCTIONS FOR AI MODELS
-> *To the AI:* You have received a deterministic, cross-verified six-culture natal dossier computed using Swiss Ephemeris and precise astronomical algorithms. Analyze this dataset comparatively across Jyotisha, Hellenistic, BaZi, Maya, and Tibetan systems. Highlight where the traditions converge into unified life themes, explain the nuances of the timing periods, and treat the findings as symbolic archetypes rather than fatalistic prophecies.
+## 4. MASTER PREDICTIVE TIMELINE (2026 – 2040)
+
+### 4A. Career & Professional Development
+
+| Time Period | Positions & Cycles | Precise Prediction & Explanation |
+|---|---|---|
+"""
+    for t in timeline_2026_2040:
+        pp = t['planetary_positions']
+        export_markdown += f"| {t['period_label']} | {pp['dasha']}; {pp['profection']}; BaZi Year: {pp['bazi_year']} | {t['categories']['career']} |\n"
+
+    export_markdown += """
+
+### 4B. Love Life & Partnerships
+
+| Time Period | Positions & Cycles | Precise Prediction & Explanation |
+|---|---|---|
+"""
+    for t in timeline_2026_2040:
+        pp = t['planetary_positions']
+        export_markdown += f"| {t['period_label']} | {pp['dasha']}; {pp['profection']}; BaZi Year: {pp['bazi_year']} | {t['categories']['love_life']} |\n"
+
+    export_markdown += """
+
+### 4C. Finance & Wealth Accumulation
+
+| Time Period | Positions & Cycles | Precise Prediction & Explanation |
+|---|---|---|
+"""
+    for t in timeline_2026_2040:
+        pp = t['planetary_positions']
+        export_markdown += f"| {t['period_label']} | {pp['dasha']}; {pp['profection']}; BaZi Year: {pp['bazi_year']} | {t['categories']['finance']} |\n"
+
+    export_markdown += """
+
+### 4D. Health & Internal Vitality
+
+| Time Period | Positions & Cycles | Precise Prediction & Explanation |
+|---|---|---|
+"""
+    for t in timeline_2026_2040:
+        pp = t['planetary_positions']
+        export_markdown += f"| {t['period_label']} | {pp['dasha']}; {pp['profection']}; BaZi Year: {pp['bazi_year']} | {t['categories']['health']} |\n"
+
+    export_markdown += """
+---
+
+## 5. RETROSPECTIVE TIMELINE: EXPECTED PAST EVENTS (2010 – 2025)
+
+| Time Period | Planetary Positions & Cycles | Academic & Development | Social & Family Life | Internal & Health Themes |
+|---|---|---|---|---|
+"""
+    for pm in past_milestones:
+        export_markdown += f"| {pm['period_label']} | {pm['astrological_trigger']} | {pm['expected_theme']} | Reflect on social/family dynamics around age {pm['age']} | Physical and emotional developmental milestones |\n"
+
+    export_markdown += """
+---
+
+## 6. CORE PSYCHOLOGICAL PROFILE
+
+### Strengths
+"""
+    for s in biggest_strengths:
+        export_markdown += f"\n- **{s['title']}** — _{s['tradition_basis']}_ — {s['description']}\n"
+
+    export_markdown += """
+
+### Weaknesses
+"""
+    for w in biggest_weaknesses:
+        export_markdown += f"\n- **{w['title']}** — _{w['tradition_basis']}_ — {w['vulnerability']} _Mitigation:_ {w['mitigation']}\n"
+
+    export_markdown += """
+---
+
+## 7. INSTRUCTIONS FOR AI MODELS
+> *To the AI:* You have received a deterministic, cross-verified six-culture natal dossier with a full predictive timeline (2026–2040) and retrospective analysis. Your response MUST follow this exact structural format:
+
+> **Master Predictive Timeline (2026–2040):** Generate 4 separate 3-column tables (Time Period | Positions & Cycles | Precise Prediction & Explanation) for: (1) Career & Professional Development, (2) Love Life & Partnerships, (3) Finance & Wealth Accumulation, (4) Health & Internal Vitality. Cover chronological periods from 2026 through 2040 with precise astrological reasoning.
+
+> **Retrospective Timeline (2010–2025):** Generate a 5-column table (Time Period | Planetary Positions & Cycles | Academic & Development | Social & Family Life | Internal & Health Themes) covering past life phases.
+
+> **Core Psychological Profile:** Generate Strengths as a bulleted list where each bullet opens with a bolded core trait followed by a detailed paragraph explaining the astrological/psychological basis. Then generate Weaknesses as a bulleted list where each bullet opens with a bolded vulnerability followed by a detailed paragraph explaining the trait and its underlying causes.
+
+> Analyze this dataset comparatively across Jyotisha, Hellenistic, BaZi, Maya, and Tibetan systems. Highlight where traditions converge into unified life themes. Treat findings as symbolic archetypes rather than fatalistic prophecies.
 """
 
     return {
@@ -1156,6 +1252,10 @@ def calculate_chart(
         'maya': maya_data,
         'tibetan': tibetan_data,
         'domains': domain_cards,
+        'timeline': timeline_2026_2040,
+        'strengths': biggest_strengths,
+        'weaknesses': biggest_weaknesses,
+        'past_milestones': past_milestones,
         'export_markdown': export_markdown
     }
 
