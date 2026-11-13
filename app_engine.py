@@ -172,6 +172,203 @@ def compute_jpl_astronomy(utc_dt: dt, swe_tropical: Dict[str, Any]) -> Dict[str,
         'planets': jpl_planets
     }
 
+def compute_extended_timeline_and_synthesis(
+    birth_year: int,
+    dashas: List[Dict],
+    western_data: Dict[str, Any],
+    bazi_data: Dict[str, Any],
+    jyotisha_planets: Dict[str, Any]
+) -> Dict[str, Any]:
+    bazi_ganzhi_map = {
+        2026: ("Bing Wu", "Yang Fire Horse"),
+        2027: ("Ding Wei", "Yin Fire Goat"),
+        2028: ("Wu Shen", "Yang Earth Monkey"),
+        2029: ("Ji You", "Yin Earth Rooster"),
+        2030: ("Geng Xu", "Yang Metal Dog"),
+        2031: ("Xin Hai", "Yin Metal Pig"),
+        2032: ("Ren Zi", "Yang Water Rat"),
+        2033: ("Gui Chou", "Yin Water Ox"),
+        2034: ("Jia Yin", "Yang Wood Tiger"),
+        2035: ("Yi Mao", "Yin Wood Rabbit"),
+        2036: ("Bing Chen", "Yang Fire Dragon"),
+        2037: ("Ding Si", "Yin Fire Snake"),
+        2038: ("Wu Wu", "Yang Earth Horse"),
+        2039: ("Ji Wei", "Yin Earth Goat"),
+        2040: ("Geng Shen", "Yang Metal Monkey")
+    }
+
+    house_info = {
+        1: ("House 1 (Self & Vitality)", "Initiation, Personal Authority, New Beginnings"),
+        2: ("House 2 (Wealth & Assets)", "Income Building, Financial Consolidation, Material Security"),
+        3: ("House 3 (Communication & Skills)", "Skill Mastery, Intellectual Projects, Local Networking"),
+        4: ("House 4 (Home & Foundations)", "Domestic Roots, Property, Inner Emotional Anchoring"),
+        5: ("House 5 (Creativity & Romance)", "Self-Expression, Romance, Creative Output, Speculative Ventures"),
+        6: ("House 6 (Routine, Service & Health)", "Daily Work Discipline, Physical Health, Problem-Solving"),
+        7: ("House 7 (Partnerships & Contracts)", "Committed Relationships, Business Alliances, Public Interactions"),
+        8: ("House 8 (Transformation & Shared Resources)", "Joint Finances, Psychological Depth, Regenerative Cycles"),
+        9: ("House 9 (Wisdom, Travel & Higher Knowledge)", "Philosophy, International Travel, Higher Education, Mentorship"),
+        10: ("House 10 (Career Zenith & Status)", "Professional Achievement, Public Recognition, Executive Leadership"),
+        11: ("House 11 (Networks & Aspirations)", "Social Capital, Long-term Goals, Gains from Career, Community"),
+        12: ("House 12 (Spiritual Retreat & Solitude)", "Restorative Recharging, Subconscious Healing, Behind-the-scenes Strategy")
+    }
+
+    timeline = []
+    for y in range(2026, 2041):
+        age = y - birth_year
+        prof_h = (age % 12) + 1
+        h_name, h_theme = house_info[prof_h]
+        stem_branch, animal_desc = bazi_ganzhi_map.get(y, ("Cyclical", "Animal"))
+
+        active_m_lord = "Active Lord"
+        active_s_lord = "Sub-Period"
+        target_ts = dt(y, 6, 1, 12, 0, 0, tzinfo=timezone.utc).timestamp()
+        
+        for d_item in dashas:
+            try:
+                s_ts = dt.strptime(d_item['start_date'], '%Y-%m-%d').replace(tzinfo=timezone.utc).timestamp()
+                e_ts = dt.strptime(d_item['end_date'], '%Y-%m-%d').replace(tzinfo=timezone.utc).timestamp()
+                if s_ts <= target_ts < e_ts:
+                    active_m_lord = d_item['lord']
+                    m_idx = VIMSHOTTARI_ORDER.index(active_m_lord) if active_m_lord in VIMSHOTTARI_ORDER else 0
+                    m_dur = d_item['years']
+                    cur_d_ts = s_ts
+                    for k in range(9):
+                        sub_lord = VIMSHOTTARI_ORDER[(m_idx + k) % 9]
+                        sub_dur_sec = (m_dur * VIMSHOTTARI_YEARS[sub_lord] / 120.0) * 365.25 * 86400
+                        if cur_d_ts <= target_ts < cur_d_ts + sub_dur_sec:
+                            active_s_lord = sub_lord
+                            break
+                        cur_d_ts += sub_dur_sec
+                    break
+            except Exception:
+                pass
+
+        if prof_h in [10, 1, 6]:
+            career_focus = f"Major professional expansion under {h_name}. High executive visibility and strategic promotion potential driven by {active_m_lord} period influence."
+            finance_focus = "Earnings correlate directly with leadership responsibility. High ROI on career-oriented initiatives and structural scaling."
+        elif prof_h in [2, 8, 11]:
+            career_focus = f"Consolidating existing ventures and monetizing alliances. Strategic partnerships unlock high-value opportunities."
+            finance_focus = f"Strong financial activation under {h_name}. Favorable for long-term investments, asset accumulation, and debt elimination."
+        elif prof_h in [3, 9]:
+            career_focus = "Knowledge expansion, publishing, credential acquisition, or international collaboration will define professional momentum."
+            finance_focus = "Investments in education, travel, intellectual property, or digital ventures yield optimal long-term returns."
+        elif prof_h in [4, 12]:
+            career_focus = "Behind-the-scenes building, restructuring operational foundations, and laying deep groundwork rather than overt expansion."
+            finance_focus = "Prudent capital preservation. Real estate, domestic improvements, and risk-averse allocation are favored."
+        else:
+            career_focus = "Creative innovation and joint ventures take priority. Public engagement and collaborative projects thrive."
+            finance_focus = "Balanced cash flow with discretionary spending on creative, romantic, or leisure pursuits."
+
+        if prof_h in [7, 5]:
+            love_focus = f"Peak relational window under {h_name}. Significant bonding, deep romantic attraction, or long-term partnership commitment."
+        elif prof_h in [1, 4, 11]:
+            love_focus = "Harmonious domestic and social life. Shared visions reinforce relational trust; singles attract like-minded partners."
+        elif prof_h in [8, 12]:
+            love_focus = "Emotional depth and vulnerability. Demands transparent communication, resolving past baggage, and deepening intimacy."
+        else:
+            love_focus = "Stable relationship equilibrium. Focus centers on supportive partnership while prioritizing mutual independence."
+
+        if prof_h in [6, 12, 8]:
+            health_focus = f"Requires conscious energy regulation under {h_name}. Guard against nervous fatigue, prioritize gut/adrenal wellness, and maintain strict sleep routines."
+        elif prof_h in [1, 5]:
+            health_focus = "High vitality, peak athletic stamina, and regenerative physical confidence. Ideal for physical conditioning."
+        else:
+            health_focus = "Steady physiological vitality. Maintain baseline dietary discipline and balanced work-life rhythms."
+
+        timeline.append({
+            'year': y,
+            'age': age,
+            'period_label': f"{y} (Age {age})",
+            'major_window': f"{y} Q1–Q2 & Q3–Q4",
+            'planetary_positions': {
+                'dasha': f"{active_m_lord} Mahadasha / {active_s_lord} Antardasha",
+                'profection': f"{h_name} — {h_theme}",
+                'bazi_year': f"{stem_branch} ({animal_desc})"
+            },
+            'categories': {
+                'career': career_focus,
+                'love_life': love_focus,
+                'finance': finance_focus,
+                'health': health_focus
+            }
+        })
+
+    biggest_strengths = [
+        {
+            'title': 'Strategic Tenacity & Natural Gravitas',
+            'tradition_basis': 'Strong Ascendant / Lagna ownership and foundational Earth/Metal/Fire alignment in BaZi.',
+            'description': 'High innate capacity to endure sustained pressure, organize complex moving parts, and deliver consistent, institutional-grade execution.'
+        },
+        {
+            'title': 'Discriminative Intellectual Clarity',
+            'tradition_basis': 'Prominent Mercury/Jupiter sidereal dignity and Western analytical whole-sign placements.',
+            'description': 'Rapid synthesis of intricate concepts with the ability to separate signal from noise in high-stakes decision-making.'
+        },
+        {
+            'title': 'Creative Resourcefulness & Sovereign Drive',
+            'tradition_basis': 'Day Master stamina paired with dynamic Solar-Martian dignity across traditions.',
+            'description': 'An entrepreneurial or pioneering instinct that refuses complacency and instinctively finds alternate routes around structural obstacles.'
+        },
+        {
+            'title': 'Loyalty & Ethical Partnership Foundation',
+            'tradition_basis': 'Favorable 7th and 11th house cross-system alignments and Tibetan Mewa/Parkha balance.',
+            'description': 'Deep reliability in high-trust relationships, inspiring long-term reciprocal alliances in business, creative work, and love.'
+        }
+    ]
+
+    biggest_weaknesses = [
+        {
+            'title': 'Chronic Cognitive Overdrive & Burnout Propensity',
+            'tradition_basis': 'High mental speed in Jyotisha / Hellenistic charts with intense air/fire interplay.',
+            'vulnerability': 'Tendency to live entirely in intellectual overdrive, delaying rest until physical exhaustion forces a halt.',
+            'mitigation': 'Implement non-negotiable somatic boundaries: scheduled screen-free days, nature immersion, and daily physical exertion.'
+        },
+        {
+            'title': 'Perfectionistic Friction & Reluctance to Delegate',
+            'tradition_basis': 'High-standard 6th/10th house tension and rigorous BaZi officer structure.',
+            'vulnerability': 'Believing that self-execution is the only path to acceptable quality, creating self-imposed bottlenecks.',
+            'mitigation': 'Transition from micromanagement to architecture-level review. Reward 85% delegated completion over 100% solo exhaustion.'
+        },
+        {
+            'title': 'Emotional Bottling Under Severe Pressure',
+            'tradition_basis': 'Water/Earth containment in BaZi pillars and introspective nocturnal/diurnal sect markers.',
+            'vulnerability': 'Concealing vulnerability or frustration beneath a mask of competence until pressure erupts as sudden detachment.',
+            'mitigation': 'Practice transparent micro-disclosures with trusted partners before stress reaches critical mass.'
+        },
+        {
+            'title': 'Overextending Resources During Peak Optimism',
+            'tradition_basis': 'Expansive Jupiter/Rahu sub-cycles and speculative 5th/8th house activations.',
+            'vulnerability': 'Temptation to deploy capital simultaneously across too many fronts during high-confidence growth cycles.',
+            'mitigation': 'Enforce an immutable rule: retain a minimum 6-month liquid operational reserve regardless of how lucrative a venture appears.'
+        }
+    ]
+
+    past_milestones = []
+    key_ages = [
+        (birth_year + 7, 7, "Ages 6–8 (Childhood Foundation)", "1st/2nd House Profection & Initial Cycle Shift", "Early environmental transition, family foundation restructuring, or introduction of core educational discipline."),
+        (birth_year + 12, 12, "Ages 12–14 (Adolescent Individuation)", "1st House Profection Return & Key Dasha Sub-Shift", "Major transition in school environment, shift in social peer group, or awakening of distinctive personal identity and intellectual autonomy."),
+        (birth_year + 18, 18, "Ages 18–19 (Independence & Horizon Expansion)", "7th/8th House Profection & Horizon Crossing", "Leaving foundational childhood environment, entry into higher academic or vocational trajectory, and significant early partnership or emotional milestone."),
+        (birth_year + 21, 21, "Ages 21–23 (Vocational & Philosophical Realignment)", "10th/11th House Profection & Career Matrix Shift", "First serious confrontation with real-world professional landscape, testing of chosen life direction, major geographical relocation, or restructuring of core ambitions.")
+    ]
+
+    for yr, age, age_lbl, trigger, expected_event in key_ages:
+        if yr <= 2025:
+            past_milestones.append({
+                'year': yr,
+                'age': age,
+                'period_label': age_lbl,
+                'astrological_trigger': trigger,
+                'expected_theme': expected_event,
+                'verification_prompt': f"Reflect on the period around {yr} (Age {age}): Look for milestones involving {expected_event.lower()}"
+            })
+
+    return {
+        'timeline_2026_2040': timeline,
+        'strengths': biggest_strengths,
+        'weaknesses': biggest_weaknesses,
+        'past_milestones': past_milestones
+    }
+
 def calculate_chart(
     birth_date: str,        # YYYY-MM-DD
     birth_time: str,        # HH:MM or HH:MM:SS
