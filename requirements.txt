@@ -1,0 +1,14 @@
+fastapi>=0.115.0
+uvicorn>=0.30.0
+pydantic>=2.9.0
+requests>=2.31.0
+pysweph>=2.10.3.6
+lunar_python>=1.4.9
+convertdate>=2.5.1
+timezonefinder>=5.2.0
+tzdata>=2024.1
+numpy>=1.26.0
+pandas>=2.2.0
+skyfield>=1.48
+skyfield-data>=7.0.0
+

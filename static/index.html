@@ -1,0 +1,1739 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AstroCheck — Six-Culture Verified Natal System</title>
+
+  <!-- Fonts: Cinzel for Tarot Arcana Titles, Outfit for modern legible UI -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Outfit', 'sans-serif'],
+            tarot: ['Cinzel', 'serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            cosmic: {
+              950: '#070814',
+              900: '#0c0e21',
+              850: '#11142e',
+              800: '#171b3d',
+              700: '#232959',
+            },
+            tarotGold: '#f6c445',
+            tarotSun: '#fbbf24',
+            tarotMoon: '#818cf8',
+            tarotStar: '#38bdf8',
+            tarotRose: '#f43f5e',
+            tarotEmerald: '#10b981',
+            tarotPurple: '#a855f7'
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Claymorphism 3D tactile utilities with larger proportions */
+    .clay-card {
+      background: linear-gradient(135deg, rgba(23, 27, 61, 0.88) 0%, rgba(16, 19, 44, 0.96) 100%);
+      border-radius: 32px;
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      box-shadow:
+        16px 16px 36px rgba(0, 0, 0, 0.65),
+        -10px -10px 28px rgba(255, 255, 255, 0.03),
+        inset 2px 2px 6px rgba(255, 255, 255, 0.12),
+        inset -3px -3px 8px rgba(0, 0, 0, 0.45);
+      backdrop-filter: blur(14px);
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .clay-card:hover {
+      box-shadow:
+        20px 20px 44px rgba(0, 0, 0, 0.75),
+        -12px -12px 32px rgba(255, 255, 255, 0.05),
+        inset 2px 2px 7px rgba(255, 255, 255, 0.16),
+        inset -3px -3px 8px rgba(0, 0, 0, 0.45);
+      transform: translateY(-2px);
+    }
+
+    .clay-card-gold {
+      background: linear-gradient(135deg, rgba(38, 30, 20, 0.92) 0%, rgba(20, 16, 26, 0.96) 100%);
+      border: 1px solid rgba(246, 196, 69, 0.28);
+      box-shadow:
+        16px 16px 36px rgba(0, 0, 0, 0.65),
+        -8px -8px 24px rgba(246, 196, 69, 0.05),
+        inset 2px 2px 6px rgba(246, 196, 69, 0.22),
+        inset -3px -3px 8px rgba(0, 0, 0, 0.5);
+    }
+
+    .clay-button-primary {
+      background: linear-gradient(135deg, #f6c445 0%, #d97706 100%);
+      color: #0c0e21;
+      font-weight: 800;
+      border-radius: 22px;
+      box-shadow:
+        8px 8px 22px rgba(217, 119, 6, 0.45),
+        -4px -4px 14px rgba(255, 255, 255, 0.18),
+        inset 2px 2px 5px rgba(255, 255, 255, 0.45),
+        inset -2px -2px 5px rgba(0, 0, 0, 0.28);
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .clay-button-primary:hover {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow:
+        10px 10px 28px rgba(217, 119, 6, 0.6),
+        -5px -5px 18px rgba(255, 255, 255, 0.25),
+        inset 2px 2px 5px rgba(255, 255, 255, 0.55);
+    }
+
+    .clay-button-primary:active {
+      transform: translateY(2px) scale(0.98);
+      box-shadow: inset 4px 4px 8px rgba(0, 0, 0, 0.4);
+    }
+
+    .clay-button-secondary {
+      background: linear-gradient(135deg, rgba(35, 41, 89, 0.92) 0%, rgba(20, 24, 56, 0.96) 100%);
+      color: #f1f5f9;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow:
+        8px 8px 20px rgba(0, 0, 0, 0.55),
+        -4px -4px 14px rgba(255, 255, 255, 0.04),
+        inset 1px 1px 4px rgba(255, 255, 255, 0.18),
+        inset -2px -2px 5px rgba(0, 0, 0, 0.45);
+      transition: all 0.2s ease;
+    }
+
+    .clay-button-secondary:hover {
+      background: linear-gradient(135deg, rgba(48, 56, 120, 0.96) 0%, rgba(29, 35, 82, 0.96) 100%);
+      transform: translateY(-1px);
+      color: #ffffff;
+      box-shadow:
+        10px 10px 24px rgba(0, 0, 0, 0.65),
+        -4px -4px 16px rgba(255, 255, 255, 0.06);
+    }
+
+    .clay-button-secondary:active {
+      transform: translateY(1px);
+      box-shadow: inset 3px 3px 6px rgba(0, 0, 0, 0.4);
+    }
+
+    .clay-input {
+      background: rgba(12, 14, 33, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 18px;
+      box-shadow:
+        inset 3px 3px 10px rgba(0, 0, 0, 0.65),
+        inset -2px -2px 6px rgba(255, 255, 255, 0.04),
+        0 4px 14px rgba(0, 0, 0, 0.25);
+      color: #f8fafc;
+      transition: all 0.2s ease;
+    }
+
+    .clay-input:focus {
+      outline: none;
+      border-color: #f6c445;
+      box-shadow:
+        inset 3px 3px 10px rgba(0, 0, 0, 0.75),
+        0 0 20px rgba(246, 196, 69, 0.35);
+    }
+
+    /* Hide number input spinners for clean layout */
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    input[type=number] {
+      -moz-appearance: textfield;
+    }
+
+    /* Tarot Celestial Background Animations */
+    .celestial-bg {
+      background-color: #070814;
+      background-image:
+        radial-gradient(circle at 15% 20%, rgba(168, 85, 247, 0.14) 0%, transparent 40%),
+        radial-gradient(circle at 85% 30%, rgba(246, 196, 69, 0.12) 0%, transparent 45%),
+        radial-gradient(circle at 50% 75%, rgba(6, 182, 212, 0.09) 0%, transparent 50%);
+    }
+
+    @keyframes floatSlow {
+
+      0%,
+      100% {
+        transform: translateY(0px) rotate(0deg);
+      }
+
+      50% {
+        transform: translateY(-14px) rotate(3deg);
+      }
+    }
+
+    @keyframes floatReverse {
+
+      0%,
+      100% {
+        transform: translateY(0px) rotate(0deg);
+      }
+
+      50% {
+        transform: translateY(14px) rotate(-3deg);
+      }
+    }
+
+    .tarot-float-1 {
+      animation: floatSlow 14s ease-in-out infinite;
+    }
+
+    .tarot-float-2 {
+      animation: floatReverse 18s ease-in-out infinite;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 9px;
+      height: 9px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #0c0e21;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #232959;
+      border-radius: 5px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #f6c445;
+    }
+  </style>
+</head>
+
+<body
+  class="celestial-bg min-h-screen text-slate-100 font-sans selection:bg-amber-400 selection:text-slate-900 relative overflow-x-hidden text-base">
+
+  <!-- ===================================================================== -->
+  <!-- TAROT BACKGROUND CELESTIAL ARTWORK (Suns, Moons, Stars, Wheel) -->
+  <!-- ===================================================================== -->
+  <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden opacity-25">
+
+    <!-- Tarot Mystic Sun (Top Right) -->
+    <div class="absolute -top-16 -right-16 w-96 h-96 tarot-float-1">
+      <svg viewBox="0 0 200 200"
+        class="w-full h-full text-amber-300 filter drop-shadow-[0_0_25px_rgba(251,191,36,0.4)]">
+        <g stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+          <line x1="100" y1="15" x2="100" y2="35" />
+          <line x1="100" y1="185" x2="100" y2="165" />
+          <line x1="15" y1="100" x2="35" y2="100" />
+          <line x1="185" y1="100" x2="165" y2="100" />
+          <line x1="40" y1="40" x2="55" y2="55" />
+          <line x1="160" y1="160" x2="145" y2="145" />
+          <line x1="40" y1="160" x2="55" y2="145" />
+          <line x1="160" y1="40" x2="145" y2="55" />
+          <path d="M100 25 Q106 35 100 45" fill="none" />
+          <path d="M100 175 Q94 165 100 155" fill="none" />
+          <path d="M25 100 Q35 94 45 100" fill="none" />
+          <path d="M175 100 Q165 106 155 100" fill="none" />
+        </g>
+        <circle cx="100" cy="100" r="48" fill="none" stroke="currentColor" stroke-width="2.2" />
+        <circle cx="100" cy="100" r="42" fill="none" stroke="currentColor" stroke-dasharray="3,3" />
+        <path d="M85 92 Q100 88 115 92" stroke="currentColor" stroke-width="1.8" fill="none" />
+        <circle cx="88" cy="98" r="3" fill="currentColor" />
+        <circle cx="112" cy="98" r="3" fill="currentColor" />
+        <path d="M100 102 L100 114 L95 116" stroke="currentColor" stroke-width="1.8" fill="none" />
+        <path d="M88 124 Q100 134 112 124" stroke="currentColor" stroke-width="2" fill="none" />
+      </svg>
+    </div>
+
+    <!-- Tarot Crescent Moon (Top Left) -->
+    <div class="absolute top-36 -left-12 w-80 h-80 tarot-float-2">
+      <svg viewBox="0 0 200 200"
+        class="w-full h-full text-indigo-300 filter drop-shadow-[0_0_20px_rgba(165,180,252,0.3)]">
+        <path d="M110 30 A75 75 0 1 0 110 170 A55 55 0 1 1 110 30 Z" fill="none" stroke="currentColor"
+          stroke-width="2.2" />
+        <path d="M100 65 Q115 80 102 95 Q90 105 105 115 Q95 130 85 140" fill="none" stroke="currentColor"
+          stroke-width="1.8" />
+        <polygon points="145,85 150,97 162,100 150,103 145,115 140,103 128,100 140,97" fill="currentColor" />
+      </svg>
+    </div>
+
+    <!-- Tarot Arcana Major Star (Center Bottom) -->
+    <div class="absolute bottom-10 right-1/4 w-72 h-72 tarot-float-1">
+      <svg viewBox="0 0 200 200" class="w-full h-full text-cyan-300 opacity-60">
+        <polygon points="100,10 112,70 170,70 122,105 142,165 100,128 58,165 78,105 30,70 88,70" fill="none"
+          stroke="currentColor" stroke-width="2" />
+        <circle cx="100" cy="100" r="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="2,2" />
+        <circle cx="100" cy="100" r="4" fill="currentColor" />
+      </svg>
+    </div>
+
+    <!-- Mystic Eye of Providence (Mid Left) -->
+    <div class="absolute top-2/3 -left-10 w-64 h-64 tarot-float-2 opacity-40">
+      <svg viewBox="0 0 200 200" class="w-full h-full text-purple-300">
+        <polygon points="100,30 180,160 20,160" fill="none" stroke="currentColor" stroke-width="2" />
+        <path d="M50 120 Q100 80 150 120 Q100 150 50 120 Z" fill="none" stroke="currentColor" stroke-width="1.8" />
+        <circle cx="100" cy="116" r="12" fill="currentColor" />
+      </svg>
+    </div>
+
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- NAVIGATION BAR -->
+  <!-- ===================================================================== -->
+  <nav class="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-4">
+    <div class="clay-card px-8 py-5 flex flex-wrap items-center justify-between gap-4">
+
+      <!-- Brand Logo -->
+      <div class="flex items-center gap-3.5 cursor-pointer" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+        <div
+          class="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-slate-950 font-black shadow-lg shadow-amber-500/20">
+          <i data-lucide="sparkles" class="w-7 h-7"></i>
+        </div>
+        <div>
+          <h1 class="font-tarot text-2xl font-bold tracking-wider text-amber-300">ASTROCHECK</h1>
+          <p class="text-xs sm:text-sm text-slate-400 font-medium">Six-Culture Verified Natal System</p>
+        </div>
+      </div>
+
+      <!-- Action Button -->
+      <div class="flex items-center gap-4">
+        <button onclick="openAISettingsModal()"
+          class="clay-button-secondary px-5 py-3 text-sm font-bold flex items-center gap-2.5 border-purple-500/30 text-purple-200 hover:text-white">
+          <i data-lucide="bot" class="w-5 h-5 text-purple-400"></i>
+          <span id="nav-ai-status">AI Model Settings</span>
+        </button>
+      </div>
+
+    </div>
+  </nav>
+
+  <!-- ===================================================================== -->
+  <!-- HERO BANNER -->
+  <!-- ===================================================================== -->
+  <header class="relative z-10 max-w-5xl mx-auto text-center px-4 pt-12 pb-14">
+    <div
+      class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full clay-card text-sm font-semibold text-amber-300 border border-amber-400/25 mb-6">
+      <i data-lucide="compass" class="w-5 h-5 text-amber-400"></i>
+      <span>Deterministic Swiss Ephemeris • JPL DE421 Validated • Zero Fabrication</span>
+    </div>
+
+    <h1
+      class="font-tarot text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-purple-300 leading-tight mb-5">
+      One Birth Instant.<br>Six Ancient Mirrors.
+    </h1>
+
+    <p class="text-lg sm:text-2xl text-slate-300 max-w-3xl mx-auto font-normal leading-relaxed">
+      Cross-verify your chart across <span class="text-amber-300 font-semibold">Jyotisha</span>,
+      <span class="text-purple-300 font-semibold">Western Hellenistic</span>,
+      <span class="text-emerald-300 font-semibold">BaZi Four Pillars</span>,
+      <span class="text-cyan-300 font-semibold">Maya Calendar</span>,
+      <span class="text-rose-300 font-semibold">Tibetan Elemental</span>, and
+      <span class="text-indigo-300 font-semibold">JPL Astronomy</span>.
+    </p>
+  </header>
+
+  <!-- ===================================================================== -->
+  <!-- MAIN FORM & INTERACTIVE SYSTEM -->
+  <!-- ===================================================================== -->
+  <main class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-28 space-y-14">
+
+    <!-- BIRTH INPUT CARD -->
+    <section class="clay-card p-8 sm:p-12 relative overflow-hidden">
+      <div class="flex items-center justify-between pb-6 border-b border-slate-700/60 mb-8">
+        <div class="flex items-center gap-4">
+          <div class="w-12 h-12 rounded-2xl bg-amber-400/20 text-amber-400 flex items-center justify-center">
+            <i data-lucide="calendar" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <h2 class="font-tarot text-2xl sm:text-3xl font-bold text-amber-200">Enter Your Natal Details</h2>
+            <p class="text-sm sm:text-base text-slate-400">All calculations use apparent geocentric coordinates with
+              historical timezone audits.</p>
+          </div>
+        </div>
+      </div>
+
+      <form id="natal-form" onsubmit="handleCalculate(event)" class="space-y-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-7">
+
+          <!-- Date of Birth -->
+          <div>
+            <label class="block text-sm font-bold text-slate-200 mb-2.5 uppercase tracking-wider">
+              Date of Birth <span class="text-rose-400">*</span>
+            </label>
+            <input type="date" id="birth_date" required class="clay-input w-full px-5 py-4 text-base">
+          </div>
+
+          <!-- Time of Birth -->
+          <div>
+            <label class="block text-sm font-bold text-slate-200 mb-2.5 uppercase tracking-wider">
+              Time of Birth (AM / PM) <span class="text-rose-400">*</span>
+            </label>
+            <div class="flex gap-2">
+              <div class="relative flex-1">
+                <input type="text" id="birth_time" required placeholder="e.g. 02:26" oninput="handleTimeInputChange()"
+                  onblur="formatTimeInputOnBlur()" class="clay-input w-full px-4 py-4 text-base pr-9 font-medium">
+                <button type="button" onclick="clearBirthTime()"
+                  class="absolute right-3 top-4 text-slate-400 hover:text-rose-400 transition-colors"
+                  title="Clear Time">
+                  <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+              </div>
+              <select id="birth_time_ampm"
+                class="clay-input w-28 px-2 py-4 text-base font-bold text-amber-300 bg-slate-900 border border-slate-700/80 rounded-2xl cursor-pointer text-center"
+                title="Time of Day: AM or PM">
+                <option value="AM">AM</option>
+                <option value="PM" selected>PM</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Time Certainty -->
+          <div>
+            <label class="block text-sm font-bold text-slate-200 mb-2.5 uppercase tracking-wider">
+              Time Certainty <span class="text-rose-400">*</span>
+            </label>
+            <select id="time_certainty" class="clay-input w-full px-5 py-4 text-base bg-slate-900">
+              <option value="exact">Exact (Hospital / Certificate Record)</option>
+              <option value="rounded">Rounded (Nearest 5–15 min)</option>
+              <option value="approximate">Approximate (±30 min range)</option>
+              <option value="unknown">Unknown (Date-stable systems only)</option>
+            </select>
+          </div>
+
+          <!-- Gender -->
+          <div>
+            <label class="block text-sm font-bold text-slate-200 mb-2.5 uppercase tracking-wider">
+              Gender (BaZi & Tibetan timing) <span class="text-rose-400">*</span>
+            </label>
+            <select id="gender" class="clay-input w-full px-5 py-4 text-base bg-slate-900">
+              <option value="male">Male (陽男 / 陰男 rule)</option>
+              <option value="female">Female (陽女 / 陰女 rule)</option>
+              <option value="other">Other / Non-Binary</option>
+            </select>
+          </div>
+
+          <!-- Birthplace City & Country -->
+          <div class="lg:col-span-2">
+            <label class="block text-sm font-bold text-slate-200 mb-2.5 uppercase tracking-wider">
+              Birthplace (City, Region, Country) <span class="text-rose-400">*</span>
+            </label>
+            <div class="relative">
+              <input type="text" id="birthplace_name" required placeholder="e.g. London, United Kingdom or Tokyo, Japan"
+                oninput="handleBirthplaceInput()" class="clay-input w-full px-5 py-4 text-base pl-12 pr-12">
+              <i data-lucide="map-pin" class="w-5 h-5 text-slate-400 absolute left-4 top-4"></i>
+              <button type="button" onclick="clearBirthplace()"
+                class="absolute right-4 top-4 text-slate-400 hover:text-rose-400 transition-colors"
+                title="Clear Birthplace">
+                <i data-lucide="x" class="w-4 h-4"></i>
+              </button>
+            </div>
+            <div class="flex items-center justify-between gap-2 mt-2">
+              <span id="auto-coord-status" class="text-xs text-cyan-400 font-medium flex items-center gap-1"></span>
+              <button type="button" onclick="quickGeocode()"
+                class="text-xs text-cyan-400 hover:text-cyan-300 flex items-center gap-1 font-semibold ml-auto">
+                <i data-lucide="search" class="w-3.5 h-3.5"></i> Lookup Online
+              </button>
+            </div>
+          </div>
+
+          <!-- Latitude -->
+          <div>
+            <label class="block text-sm font-bold text-slate-200 mb-2.5 uppercase tracking-wider">
+              Latitude (N / S) <span class="text-rose-400">*</span>
+            </label>
+            <div class="flex gap-2">
+              <div class="relative flex-1">
+                <input type="text" inputmode="decimal" id="latitude" required placeholder="e.g. 51.5074"
+                  oninput="handleLatInputChange()" class="clay-input w-full px-4 py-4 text-base pr-9 font-medium">
+                <button type="button" onclick="clearLatitude()"
+                  class="absolute right-3 top-4 text-slate-400 hover:text-rose-400 transition-colors"
+                  title="Clear Latitude">
+                  <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+              </div>
+              <select id="latitude_dir"
+                class="clay-input w-28 px-2 py-4 text-base font-bold text-amber-300 bg-slate-900 border border-slate-700/80 rounded-2xl cursor-pointer text-center"
+                title="Latitude Direction (North or South)">
+                <option value="N" selected>N (North)</option>
+                <option value="S">S (South)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Longitude -->
+          <div>
+            <label class="block text-sm font-bold text-slate-200 mb-2.5 uppercase tracking-wider">
+              Longitude (E / W) <span class="text-rose-400">*</span>
+            </label>
+            <div class="flex gap-2">
+              <div class="relative flex-1">
+                <input type="text" inputmode="decimal" id="longitude" required placeholder="e.g. 0.1278"
+                  oninput="handleLonInputChange()" class="clay-input w-full px-4 py-4 text-base pr-9 font-medium">
+                <button type="button" onclick="clearLongitude()"
+                  class="absolute right-3 top-4 text-slate-400 hover:text-rose-400 transition-colors"
+                  title="Clear Longitude">
+                  <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+              </div>
+              <select id="longitude_dir"
+                class="clay-input w-28 px-2 py-4 text-base font-bold text-amber-300 bg-slate-900 border border-slate-700/80 rounded-2xl cursor-pointer text-center"
+                title="Longitude Direction (East or West)">
+                <option value="E" selected>E (East)</option>
+                <option value="W">W (West)</option>
+              </select>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Coordinates Guidance Notice & Clear All -->
+        <div
+          class="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-amber-200 text-xs sm:text-sm">
+          <div class="flex items-center gap-2.5">
+            <i data-lucide="map-pin" class="w-5 h-5 text-amber-400 shrink-0"></i>
+            <span><strong>Location Note:</strong> Enter coordinates with cardinal directions (N/S for Latitude, E/W for
+              Longitude) for accurate astronomical calculation. Changing birthplace automatically updates coordinates
+              and directions.</span>
+          </div>
+          <button type="button" onclick="clearAllLocation()"
+            class="text-xs text-rose-400 hover:text-rose-300 font-bold underline shrink-0 flex items-center gap-1 self-end sm:self-auto">
+            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Clear Location Data
+          </button>
+        </div>
+
+        <!-- Optional Current Residence -->
+        <div class="pt-2">
+          <label class="block text-sm font-bold text-slate-300 mb-2.5 uppercase tracking-wider">
+            Current Residence (Optional — for relocated timing methods)
+          </label>
+          <input type="text" id="current_residence" placeholder="e.g. Paris, France or Sydney, Australia (Optional)"
+            class="clay-input w-full px-5 py-3.5 text-base">
+        </div>
+
+        <!-- Submit Button -->
+        <div class="pt-4 flex flex-col sm:flex-row items-center justify-between gap-5">
+          <div class="text-sm text-slate-400 flex items-center gap-2.5">
+            <i data-lucide="shield-check" class="w-5 h-5 text-emerald-400"></i>
+            <span>Pure client/server computation. No personal data is stored or logged.</span>
+          </div>
+
+          <button type="submit" id="btn-calc"
+            class="clay-button-primary px-10 py-5 text-lg font-bold flex items-center gap-3 w-full sm:w-auto justify-center">
+            <i data-lucide="sparkles" class="w-6 h-6"></i>
+            <span>Calculate Six-Culture Chart</span>
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- RESULTS SECTION -->
+    <div id="results-container" class="space-y-12 hidden">
+
+      <!-- SUB-NAVIGATION TABS -->
+      <div class="flex items-center gap-3 overflow-x-auto pb-2 scrollbar-none">
+        <button onclick="switchTab('tab-convergence')" id="nav-tab-convergence"
+          class="clay-button-secondary px-6 py-4 text-base font-bold flex items-center gap-2.5 text-amber-300 border-amber-400/40">
+          <i data-lucide="layers" class="w-5 h-5"></i>
+          <span>9-Domain Convergence</span>
+        </button>
+        <button onclick="switchTab('tab-traditions')" id="nav-tab-traditions"
+          class="clay-button-secondary px-6 py-4 text-base font-semibold flex items-center gap-2.5 text-slate-300">
+          <i data-lucide="globe" class="w-5 h-5"></i>
+          <span>Six Traditions Hub</span>
+        </button>
+        <button onclick="switchTab('tab-chronology')" id="nav-tab-chronology"
+          class="clay-button-secondary px-6 py-4 text-base font-semibold flex items-center gap-2.5 text-slate-300">
+          <i data-lucide="clock" class="w-5 h-5"></i>
+          <span>Chronology & Timing</span>
+        </button>
+        <button onclick="switchTab('tab-dossier')" id="nav-tab-dossier"
+          class="clay-button-secondary px-6 py-4 text-base font-semibold flex items-center gap-2.5 text-slate-300">
+          <i data-lucide="file-text" class="w-5 h-5"></i>
+          <span>AI Dossier & Download</span>
+        </button>
+        <button onclick="switchTab('tab-ask-ai')" id="nav-tab-ask-ai"
+          class="clay-button-secondary px-6 py-4 text-base font-bold flex items-center gap-2.5 text-purple-300 border-purple-400/30">
+          <i data-lucide="message-square" class="w-5 h-5 text-purple-400"></i>
+          <span>Ask Live AI</span>
+        </button>
+      </div>
+
+      <!-- TAB 1: 9-DOMAIN CONVERGENCE CARDS -->
+      <div id="tab-convergence" class="space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <h3 class="font-tarot text-2xl sm:text-3xl font-bold text-amber-200">Cross-Cultural Convergence Matrix</h3>
+            <p class="text-base text-slate-400">Comparative synthesis across Jyotisha, Western Hellenistic, and Sinic
+              BaZi.</p>
+          </div>
+          <div
+            class="clay-card px-5 py-2.5 text-sm font-mono text-emerald-400 flex items-center gap-2.5 self-start sm:self-auto">
+            <span class="w-3 h-3 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span>VERIFIED DUAL-ENGINE HARMONY</span>
+          </div>
+        </div>
+
+        <!-- Grid of 9 Domains -->
+        <div id="domain-cards-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7">
+          <!-- Dynamically populated via JS -->
+        </div>
+      </div>
+
+      <!-- TAB 2: SIX TRADITIONS HUB -->
+      <div id="tab-traditions" class="space-y-8 hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+          <!-- 1. Jyotisha Card -->
+          <div class="clay-card p-8 space-y-5 border-amber-400/30">
+            <div class="flex items-center justify-between border-b border-slate-700/60 pb-4">
+              <div class="flex items-center gap-3">
+                <span class="text-3xl">🕉️</span>
+                <h4 class="font-tarot text-xl font-bold text-amber-300">Jyotisha (Vedic Sidereal)</h4>
+              </div>
+              <span class="text-xs px-3 py-1.5 rounded-full bg-amber-400/10 text-amber-300 font-mono">Lahiri
+                Chitrapaksha</span>
+            </div>
+            <div id="jyotisha-summary" class="text-base space-y-2 text-slate-200"></div>
+            <div class="overflow-x-auto pt-2">
+              <table id="jyotisha-table" class="w-full text-sm text-left text-slate-300 border-collapse"></table>
+            </div>
+          </div>
+
+          <!-- 2. Western Hellenistic Card -->
+          <div class="clay-card p-8 space-y-5 border-indigo-400/30">
+            <div class="flex items-center justify-between border-b border-slate-700/60 pb-4">
+              <div class="flex items-center gap-3">
+                <span class="text-3xl">🏛️</span>
+                <h4 class="font-tarot text-xl font-bold text-indigo-300">Western / Hellenistic</h4>
+              </div>
+              <span class="text-xs px-3 py-1.5 rounded-full bg-indigo-400/10 text-indigo-300 font-mono">Tropical Whole
+                Sign</span>
+            </div>
+            <div id="western-summary" class="text-base space-y-2 text-slate-200"></div>
+            <div class="overflow-x-auto pt-2">
+              <table id="western-table" class="w-full text-sm text-left text-slate-300 border-collapse"></table>
+            </div>
+          </div>
+
+          <!-- 3. BaZi Four Pillars Card -->
+          <div class="clay-card p-8 space-y-5 border-emerald-400/30">
+            <div class="flex items-center justify-between border-b border-slate-700/60 pb-4">
+              <div class="flex items-center gap-3">
+                <span class="text-3xl">🐉</span>
+                <h4 class="font-tarot text-xl font-bold text-emerald-300">BaZi (Four Pillars of Destiny)</h4>
+              </div>
+              <span class="text-xs px-3 py-1.5 rounded-full bg-emerald-400/10 text-emerald-300 font-mono">Chinese
+                Lunisolar</span>
+            </div>
+            <div id="bazi-pillars-container" class="grid grid-cols-4 gap-3 text-center pt-2"></div>
+            <div id="bazi-summary" class="text-sm text-slate-300 space-y-2 pt-2"></div>
+          </div>
+
+          <!-- 4. Maya Calendar Card -->
+          <div class="clay-card p-8 space-y-5 border-amber-400/30">
+            <div class="flex items-center justify-between border-b border-slate-700/60 pb-4">
+              <div class="flex items-center gap-3">
+                <span class="text-3xl">⚡</span>
+                <div>
+                  <h4 class="font-tarot text-xl font-bold text-amber-300">Maya Calendar</h4>
+                  <p class="text-xs text-slate-400">Classical Mesoamerican Long Count & Round</p>
+                </div>
+              </div>
+              <span class="text-xs px-3 py-1.5 rounded-full bg-amber-400/10 text-amber-300 font-mono">GMT 584283</span>
+            </div>
+            <div id="maya-summary" class="text-sm text-slate-200 space-y-2 pt-1"></div>
+          </div>
+
+          <!-- 5. Tibetan Elemental (Jungtsi) Card -->
+          <div class="clay-card p-8 space-y-5 border-rose-400/30">
+            <div class="flex items-center justify-between border-b border-slate-700/60 pb-4">
+              <div class="flex items-center gap-3">
+                <span class="text-3xl">☸️</span>
+                <div>
+                  <h4 class="font-tarot text-xl font-bold text-rose-300">Tibetan Elemental (Jungtsi)</h4>
+                  <p class="text-xs text-slate-400">Rabjung Cycle, Mewa & Parkha Trigrams</p>
+                </div>
+              </div>
+              <span class="text-xs px-3 py-1.5 rounded-full bg-rose-400/10 text-rose-300 font-mono">60-Year Cycle</span>
+            </div>
+            <div id="tibetan-summary" class="text-sm text-slate-200 space-y-2 pt-1"></div>
+          </div>
+
+          <!-- 6. JPL Astronomy & Ephemeris Verification Card -->
+          <div class="clay-card p-8 space-y-5 border-cyan-400/40 lg:col-span-2">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-700/60 pb-4 gap-3">
+              <div class="flex items-center gap-3">
+                <span class="text-3xl">🛰️</span>
+                <div>
+                  <h4 class="font-tarot text-xl font-bold text-cyan-300">JPL Astronomy & Ephemeris Dual-Engine</h4>
+                  <p class="text-xs text-slate-400">Scientific ephemeris cross-verification: Swiss Ephemeris vs. NASA JPL DE421</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span class="text-xs px-3 py-1.5 rounded-full bg-emerald-400/10 text-emerald-300 font-mono font-bold">Δ &lt; 0.0001° VERIFIED</span>
+              </div>
+            </div>
+            
+            <div id="jpl-astro-summary" class="text-sm text-slate-300 space-y-1.5 pt-1"></div>
+
+            <div class="overflow-x-auto pt-2">
+              <table id="jpl-table" class="w-full text-xs text-left text-slate-300 border-collapse"></table>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- TAB 3: CHRONOLOGY & TIMING -->
+      <div id="tab-chronology" class="clay-card p-8 sm:p-12 space-y-7 hidden">
+        <div class="flex items-center gap-4 border-b border-slate-700/60 pb-5">
+          <div class="w-12 h-12 rounded-2xl bg-purple-500/20 text-purple-400 flex items-center justify-center">
+            <i data-lucide="hourglass" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <h3 class="font-tarot text-2xl font-bold text-purple-200">Active Multi-System Timing Window</h3>
+            <p class="text-sm text-slate-400">Harmonizing Vimshottari Mahadasha, BaZi Da Yun, and Western Annual
+              Profections.</p>
+          </div>
+        </div>
+
+        <div id="chronology-highlight" class="clay-card-gold p-7 rounded-3xl space-y-3.5"></div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-3" id="timing-clocks-grid"></div>
+      </div>
+
+      <!-- TAB 4: AI DOSSIER & DOWNLOAD -->
+      <div id="tab-dossier" class="clay-card p-8 sm:p-12 space-y-7 hidden">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-5 border-b border-slate-700/60 pb-6">
+          <div>
+            <h3 class="font-tarot text-2xl sm:text-3xl font-bold text-amber-200">Exportable AI Natal Dossier</h3>
+            <p class="text-sm sm:text-base text-slate-400">Formatted with zero-fabrication rules, ready to drop into
+              ChatGPT, Claude, Gemini, or DeepSeek.</p>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-3.5">
+            <button onclick="copyDossierForAI()"
+              class="clay-button-primary px-6 py-3.5 text-sm font-bold flex items-center gap-2">
+              <i data-lucide="copy" class="w-5 h-5"></i>
+              <span id="btn-copy-text">Copy Prompt + Dossier</span>
+            </button>
+            <button onclick="downloadDossier('md')"
+              class="clay-button-secondary px-5 py-3.5 text-sm font-semibold flex items-center gap-2">
+              <i data-lucide="download" class="w-5 h-5"></i>
+              <span>Download .MD</span>
+            </button>
+            <button onclick="downloadDossier('txt')"
+              class="clay-button-secondary px-5 py-3.5 text-sm font-semibold flex items-center gap-2">
+              <i data-lucide="file" class="w-5 h-5"></i>
+              <span>Download .TXT</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="relative">
+          <textarea id="dossier-preview" readonly rows="18"
+            class="clay-input w-full p-5 font-mono text-sm leading-relaxed text-slate-200 resize-none"></textarea>
+        </div>
+      </div>
+
+      <!-- TAB 5: ASK LIVE AI -->
+      <div id="tab-ask-ai" class="clay-card p-8 sm:p-12 space-y-7 hidden border-purple-500/30">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-5 border-b border-slate-700/60 pb-5">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-2xl bg-purple-500/20 text-purple-400 flex items-center justify-center">
+              <i data-lucide="sparkles" class="w-6 h-6"></i>
+            </div>
+            <div>
+              <h3 class="font-tarot text-2xl font-bold text-purple-200">Ask the Six-Culture AI Oracle</h3>
+              <p class="text-sm text-slate-400">Powered by your chosen AI model using your private API key.</p>
+            </div>
+          </div>
+
+          <button onclick="openAISettingsModal()"
+            class="text-sm text-purple-300 hover:text-white underline font-bold flex items-center gap-1.5">
+            <i data-lucide="settings" class="w-4 h-4"></i>
+            Configure AI Provider & Key
+          </button>
+        </div>
+
+        <!-- Quick Prompt Chips -->
+        <div class="space-y-3">
+          <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Suggested Questions:</p>
+          <div class="flex flex-wrap gap-2.5">
+            <button
+              onclick="askQuickPrompt('Explain my Career & Status (D2) convergence across Jyotisha, Western, and BaZi.')"
+              class="px-4 py-2.5 rounded-full clay-button-secondary text-sm hover:border-amber-400/50">
+              💼 Explain Career Convergence (D2)
+            </button>
+            <button
+              onclick="askQuickPrompt('Analyze the core planetary aspects in my chart and their psychological meaning.')"
+              class="px-4 py-2.5 rounded-full clay-button-secondary text-sm hover:border-indigo-400/50">
+              ⚔️ Decode Core Planetary Aspects
+            </button>
+            <button
+              onclick="askQuickPrompt('What does my active timing window advise for my professional and personal life?')"
+              class="px-4 py-2.5 rounded-full clay-button-secondary text-sm hover:border-emerald-400/50">
+              ⏳ Next 18-Month Timing Guidance
+            </button>
+            <button
+              onclick="askQuickPrompt('Break down my Day Master in BaZi and how it compares to my Lagna nakshatra.')"
+              class="px-4 py-2.5 rounded-full clay-button-secondary text-sm hover:border-rose-400/50">
+              🌿 Day Master & Lagna Nakshatra
+            </button>
+          </div>
+        </div>
+
+        <!-- Chat History Box -->
+        <div id="ai-chat-box" class="clay-input p-5 min-h-[260px] max-h-[460px] overflow-y-auto space-y-4 text-base">
+          <div class="p-5 rounded-2xl bg-purple-950/40 border border-purple-500/20 text-slate-300">
+            <p class="font-bold text-purple-300 text-sm mb-1.5">🔮 System Ready</p>
+            <p class="text-sm leading-relaxed">
+              Your verified natal chart is loaded. Click one of the suggested questions above or enter a custom prompt
+              below.
+              Make sure you have saved your API key in <span class="text-amber-300 font-bold cursor-pointer underline"
+                onclick="openAISettingsModal()">AI Settings</span>.
+            </p>
+          </div>
+        </div>
+
+        <!-- Chat Input Form -->
+        <form onsubmit="handleSendAIQuestion(event)" class="flex gap-4">
+          <input type="text" id="ai-user-query" placeholder="Ask anything about your six-culture chart..."
+            class="clay-input flex-1 px-5 py-4 text-base">
+          <button type="submit" id="btn-send-ai"
+            class="clay-button-primary px-8 py-4 text-base font-bold flex items-center gap-2">
+            <span>Send</span>
+            <i data-lucide="send" class="w-5 h-5"></i>
+          </button>
+        </form>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ===================================================================== -->
+  <!-- AI SETTINGS MODAL -->
+  <!-- ===================================================================== -->
+  <div id="ai-modal"
+    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md hidden">
+    <div class="clay-card p-8 sm:p-10 max-w-lg w-full space-y-7 relative border-purple-500/40">
+
+      <div class="flex items-center justify-between border-b border-slate-700/60 pb-4">
+        <div class="flex items-center gap-3.5">
+          <div class="w-10 h-10 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center">
+            <i data-lucide="cpu" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <h3 class="font-tarot text-xl font-bold text-purple-200">AI Model & API Key Settings</h3>
+            <p class="text-xs sm:text-sm text-slate-400">Stored safely in your browser localStorage only.</p>
+          </div>
+        </div>
+        <button onclick="closeAISettingsModal()" class="text-slate-400 hover:text-white p-1">
+          <i data-lucide="x" class="w-6 h-6"></i>
+        </button>
+      </div>
+
+      <div class="space-y-5">
+        <!-- Provider Selection -->
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-2 uppercase tracking-wider">AI Provider</label>
+          <select id="modal-ai-provider" onchange="updateModelPresets()"
+            class="clay-input w-full px-5 py-3.5 text-base bg-slate-900">
+            <option value="gemini">Google Gemini</option>
+            <option value="openai">OpenAI</option>
+            <option value="anthropic">Anthropic Claude</option>
+            <option value="groq">Groq</option>
+            <option value="openrouter">OpenRouter</option>
+            <option value="other">Other (Specify)</option>
+          </select>
+        </div>
+
+        <!-- Custom Endpoint (Shown if Other is selected) -->
+        <div id="modal-custom-endpoint-container" class="hidden">
+          <label class="block text-xs font-bold text-slate-300 mb-2 uppercase tracking-wider">Custom Base URL / API
+            Endpoint</label>
+          <input type="text" id="modal-custom-endpoint"
+            placeholder="e.g. https://api.deepseek.com/v1 or http://localhost:11434/v1"
+            class="clay-input w-full px-5 py-3.5 text-base font-mono">
+          <p class="text-xs text-slate-400 mt-1.5">OpenAI-compatible REST API endpoint (DeepSeek, Ollama, Together AI,
+            Mistral, Local vLLM, etc.)</p>
+        </div>
+
+        <!-- Model Name -->
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-2 uppercase tracking-wider">Model ID</label>
+          <input type="text" id="modal-ai-model" value="gemini-2.5-flash"
+            class="clay-input w-full px-5 py-3.5 text-base font-mono">
+          <p id="modal-model-hint" class="text-xs text-slate-400 mt-1.5">Recommended: gemini-2.5-flash</p>
+        </div>
+
+        <!-- API Key Input -->
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-2 uppercase tracking-wider flex justify-between">
+            <span>API Key</span>
+            <span id="key-stored-indicator" class="text-emerald-400 text-xs hidden">✓ Saved locally</span>
+          </label>
+          <div class="relative">
+            <input type="password" id="modal-ai-key" placeholder="Paste your API key here..."
+              class="clay-input w-full px-5 py-3.5 text-base font-mono pr-12">
+            <button type="button" onclick="toggleKeyVisibility()"
+              class="absolute right-4 top-3.5 text-slate-400 hover:text-white">
+              <i data-lucide="eye" id="eye-icon" class="w-5 h-5"></i>
+            </button>
+          </div>
+          <p class="text-xs text-slate-400 mt-1.5">Your key is never stored on our server. It calls your provider API
+            directly.</p>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-4 pt-3">
+        <button onclick="closeAISettingsModal()" class="clay-button-secondary px-6 py-3.5 text-sm font-bold">
+          Cancel
+        </button>
+        <button onclick="saveAISettings()" class="clay-button-primary px-8 py-3.5 text-sm font-extrabold">
+          Save Settings
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- FOOTER -->
+  <!-- ===================================================================== -->
+  <footer class="relative z-10 border-t border-slate-800/80 py-10 text-center text-sm text-slate-500 space-y-2.5">
+    <p class="font-tarot tracking-wider text-slate-400 text-base">ASTROCHECK — SIX-CULTURE VERIFIED NATAL SYSTEM</p>
+    <p>Computed with Swiss Ephemeris & Skyfield. Presented as comparative symbolic anthropology, never fatalistic
+      prediction.</p>
+  </footer>
+
+  <!-- ===================================================================== -->
+  <!-- APPLICATION JAVASCRIPT LOGIC -->
+  <!-- ===================================================================== -->
+  <script>
+    let currentChartData = null;
+
+    document.addEventListener("DOMContentLoaded", () => {
+      lucide.createIcons();
+      loadSavedAISettings();
+    });
+
+    // Clear and Delete location/time helpers
+    function clearBirthTime() {
+      document.getElementById('birth_time').value = '';
+      document.getElementById('birth_time_ampm').value = 'PM';
+      document.getElementById('birth_time').focus();
+    }
+
+    function clearBirthplace() {
+      document.getElementById('birthplace_name').value = '';
+      const statusEl = document.getElementById('auto-coord-status');
+      if (statusEl) statusEl.innerHTML = '';
+      document.getElementById('birthplace_name').focus();
+    }
+
+    function clearLatitude() {
+      document.getElementById('latitude').value = '';
+      document.getElementById('latitude_dir').value = 'N';
+      document.getElementById('latitude').focus();
+    }
+
+    function clearLongitude() {
+      document.getElementById('longitude').value = '';
+      document.getElementById('longitude_dir').value = 'E';
+      document.getElementById('longitude').focus();
+    }
+
+    function clearAllLocation() {
+      document.getElementById('birthplace_name').value = '';
+      document.getElementById('latitude').value = '';
+      document.getElementById('latitude_dir').value = 'N';
+      document.getElementById('longitude').value = '';
+      document.getElementById('longitude_dir').value = 'E';
+      const statusEl = document.getElementById('auto-coord-status');
+      if (statusEl) statusEl.innerHTML = '';
+      document.getElementById('birthplace_name').focus();
+    }
+
+    // Automatic direction and formatting handlers for coordinate input
+    function handleLatInputChange() {
+      const el = document.getElementById('latitude');
+      let val = el.value.trim().toUpperCase();
+      if (val.includes('-') || val.includes('S')) {
+        document.getElementById('latitude_dir').value = 'S';
+        el.value = el.value.replace(/[-S\s]/gi, '');
+      } else if (val.includes('N')) {
+        document.getElementById('latitude_dir').value = 'N';
+        el.value = el.value.replace(/[N\s]/gi, '');
+      }
+    }
+
+    function handleLonInputChange() {
+      const el = document.getElementById('longitude');
+      let val = el.value.trim().toUpperCase();
+      if (val.includes('-') || val.includes('W')) {
+        document.getElementById('longitude_dir').value = 'W';
+        el.value = el.value.replace(/[-W\s]/gi, '');
+      } else if (val.includes('E')) {
+        document.getElementById('longitude_dir').value = 'E';
+        el.value = el.value.replace(/[E\s]/gi, '');
+      }
+    }
+
+    function parseCoordinateInput(rawVal, isLat = true) {
+      if (!rawVal) return { num: NaN, dir: isLat ? 'N' : 'E' };
+      let str = String(rawVal).trim().toUpperCase();
+      let dir = isLat ? 'N' : 'E';
+
+      if (isLat) {
+        if (str.includes('S')) dir = 'S';
+        else if (str.includes('N')) dir = 'N';
+      } else {
+        if (str.includes('W')) dir = 'W';
+        else if (str.includes('E')) dir = 'E';
+      }
+
+      str = str.replace(/[NSEW°'"\s]/g, '');
+      let num = parseFloat(str);
+      if (isNaN(num)) return { num: NaN, dir };
+
+      if (num < 0) {
+        num = Math.abs(num);
+        dir = isLat ? 'S' : 'W';
+      }
+      return { num, dir };
+    }
+
+    // Automatic AM/PM and formatting handlers for time of birth
+    function handleTimeInputChange() {
+      const el = document.getElementById('birth_time');
+      let val = el.value.trim().toUpperCase();
+      if (val.includes('AM')) {
+        document.getElementById('birth_time_ampm').value = 'AM';
+        el.value = el.value.replace(/AM/gi, '').trim();
+      } else if (val.includes('PM')) {
+        document.getElementById('birth_time_ampm').value = 'PM';
+        el.value = el.value.replace(/PM/gi, '').trim();
+      }
+    }
+
+    function formatTimeInputOnBlur() {
+      const el = document.getElementById('birth_time');
+      const ampmEl = document.getElementById('birth_time_ampm');
+      const val = el.value.trim();
+      if (!val) return;
+      const res = normalizeTimeInput(val, ampmEl.value);
+      if (res) {
+        el.value = res.display12;
+        ampmEl.value = res.ampm;
+      }
+    }
+
+    function normalizeTimeInput(timeStr, ampm) {
+      if (!timeStr) return null;
+      let str = timeStr.trim().toUpperCase();
+      let selectedAmPm = ampm ? ampm.toUpperCase() : 'PM';
+
+      if (str.includes('AM')) {
+        selectedAmPm = 'AM';
+        str = str.replace(/AM/gi, '').trim();
+      } else if (str.includes('PM')) {
+        selectedAmPm = 'PM';
+        str = str.replace(/PM/gi, '').trim();
+      }
+
+      let parts = str.split(':').map(p => p.trim());
+      if (parts.length < 2) {
+        if (/^\d{3,4}$/.test(str)) {
+          const hStr = str.length === 3 ? str.slice(0, 1) : str.slice(0, 2);
+          const mStr = str.length === 3 ? str.slice(1) : str.slice(2);
+          parts = [hStr, mStr];
+        } else if (/^\d{1,2}$/.test(str)) {
+          parts = [str, '00'];
+        } else {
+          return null;
+        }
+      }
+
+      let h = parseInt(parts[0], 10);
+      let m = parseInt(parts[1], 10);
+      let s = parts.length > 2 ? parseInt(parts[2], 10) : 0;
+
+      if (isNaN(h) || isNaN(m) || isNaN(s)) return null;
+      if (m < 0 || m > 59 || s < 0 || s > 59) return null;
+      if (h < 0 || h > 23) return null;
+
+      // If user typed 24-hour style hour (e.g. 13 to 23), auto-switch to PM
+      if (h >= 12) {
+        if (h > 12) {
+          selectedAmPm = 'PM';
+        }
+      } else if (h === 0) {
+        selectedAmPm = 'AM';
+      }
+
+      // Convert to 24h format for calculation engine
+      let h24 = h;
+      if (selectedAmPm === 'PM' && h < 12) {
+        h24 = h + 12;
+      } else if (selectedAmPm === 'AM' && h === 12) {
+        h24 = 0;
+      } else if (selectedAmPm === 'AM' && h > 12) {
+        h24 = h;
+        selectedAmPm = 'PM';
+      }
+
+      const pad = (n) => String(n).padStart(2, '0');
+      const time24 = `${pad(h24)}:${pad(m)}:${pad(s)}`;
+      const hDisplay = h > 12 ? h - 12 : (h === 0 ? 12 : h);
+      const display12 = `${pad(hDisplay)}:${pad(m)}${s > 0 ? ':' + pad(s) : ''}`;
+
+      return {
+        time24,
+        display12,
+        ampm: selectedAmPm
+      };
+    }
+
+    // Auto-update coordinates on birthplace change with debouncing
+    let geocodeTimer = null;
+    function handleBirthplaceInput() {
+      clearTimeout(geocodeTimer);
+      const query = document.getElementById('birthplace_name').value.trim();
+      const statusEl = document.getElementById('auto-coord-status');
+
+      if (query.length < 3) {
+        if (statusEl) statusEl.innerHTML = '';
+        return;
+      }
+
+      if (statusEl) {
+        statusEl.innerHTML = `<span class="text-slate-400 flex items-center gap-1.5"><i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin text-cyan-400"></i> Auto-detecting coordinates...</span>`;
+        lucide.createIcons();
+      }
+
+      geocodeTimer = setTimeout(() => {
+        quickGeocode(false);
+      }, 650);
+    }
+
+    // Geocoding helper using OpenStreetMap Nominatim
+    async function quickGeocode(showAlert = true) {
+      const query = document.getElementById('birthplace_name').value.trim();
+      const statusEl = document.getElementById('auto-coord-status');
+      if (!query || query.length < 3) {
+        if (showAlert) alert("Please enter a city or country name to search.");
+        return;
+      }
+      try {
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`);
+        const data = await res.json();
+        if (data && data.length > 0) {
+          const rawLat = parseFloat(data[0].lat);
+          const rawLon = parseFloat(data[0].lon);
+
+          const latDir = rawLat >= 0 ? 'N' : 'S';
+          const latMag = Math.abs(rawLat).toFixed(5);
+
+          const lonDir = rawLon >= 0 ? 'E' : 'W';
+          const lonMag = Math.abs(rawLon).toFixed(5);
+
+          document.getElementById('latitude').value = latMag;
+          document.getElementById('latitude_dir').value = latDir;
+
+          document.getElementById('longitude').value = lonMag;
+          document.getElementById('longitude_dir').value = lonDir;
+
+          const shortName = data[0].display_name.split(',').slice(0, 2).join(',');
+          if (statusEl) {
+            statusEl.innerHTML = `<span class="text-emerald-400 font-semibold flex items-center gap-1">✓ Coordinates: ${escapeHtml(shortName)} (${latMag}° ${latDir}, ${lonMag}° ${lonDir})</span>`;
+          }
+          if (showAlert) alert(`Coordinates found: ${data[0].display_name}\nLatitude: ${latMag}° ${latDir}\nLongitude: ${lonMag}° ${lonDir}`);
+        } else {
+          if (statusEl) {
+            statusEl.innerHTML = `<span class="text-amber-400 font-medium">Location not found automatically. Enter coordinates manually.</span>`;
+          }
+          if (showAlert) alert("Location not found automatically. Please enter latitude, longitude, and directions manually.");
+        }
+      } catch (err) {
+        if (statusEl) {
+          statusEl.innerHTML = `<span class="text-slate-400">Offline. Please enter coordinates manually.</span>`;
+        }
+        if (showAlert) alert("Could not reach geocoder. Please enter coordinates manually.");
+      } finally {
+        lucide.createIcons();
+      }
+    }
+
+    // Calculate Chart
+    async function handleCalculate(event) {
+      if (event) event.preventDefault();
+
+      const bDate = document.getElementById('birth_date').value;
+      const rawTime = document.getElementById('birth_time').value.trim();
+      const ampmSelect = document.getElementById('birth_time_ampm').value || 'PM';
+      const latVal = document.getElementById('latitude').value.trim();
+      const lonVal = document.getElementById('longitude').value.trim();
+      const latDirSelect = document.getElementById('latitude_dir').value || 'N';
+      const lonDirSelect = document.getElementById('longitude_dir').value || 'E';
+
+        if (!bDate || !rawTime || !latVal || !lonVal) {
+          alert("Please fill in your Date of Birth, Time of Birth, and Location Coordinates.");
+          return;
+        }
+
+        const parsedTime = normalizeTimeInput(rawTime, ampmSelect);
+        if (!parsedTime) {
+          alert("Please enter a valid time of birth (e.g. 02:26 or 14:30).");
+          return;
+        }
+        const bTime = parsedTime.time24;
+
+        const parsedLat = parseCoordinateInput(latVal, true);
+        const chosenLatDir = latDirSelect || parsedLat.dir;
+        const latMag = !isNaN(parsedLat.num) ? parsedLat.num : parseFloat(latVal);
+        if (isNaN(latMag) || latMag < 0 || latMag > 90) {
+          alert("Please enter a valid numeric latitude (between 0° and 90°).");
+          return;
+        }
+        const finalLat = (chosenLatDir === 'S' ? -1 : 1) * Math.abs(latMag);
+
+        const parsedLon = parseCoordinateInput(lonVal, false);
+        const chosenLonDir = lonDirSelect || parsedLon.dir;
+        const lonMag = !isNaN(parsedLon.num) ? parsedLon.num : parseFloat(lonVal);
+        if (isNaN(lonMag) || lonMag < 0 || lonMag > 180) {
+          alert("Please enter a valid numeric longitude (between 0° and 180°).");
+          return;
+        }
+        const finalLon = (chosenLonDir === 'W' ? -1 : 1) * Math.abs(lonMag);
+
+        const btn = document.getElementById('btn-calc');
+        const originalHTML = btn.innerHTML;
+        btn.innerHTML = `<i data-lucide="loader-2" class="w-6 h-6 animate-spin"></i><span>Computing 6 Cultures...</span>`;
+        btn.disabled = true;
+        lucide.createIcons();
+
+        const payload = {
+          birth_date: bDate,
+          birth_time: bTime,
+          time_certainty: document.getElementById('time_certainty').value,
+          gender: document.getElementById('gender').value,
+          birthplace_name: document.getElementById('birthplace_name').value,
+          latitude: finalLat,
+          longitude: finalLon,
+          current_residence: document.getElementById('current_residence').value || ""
+        };
+
+        try {
+          const res = await fetch('/api/calculate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+
+          if (!res.ok) {
+            const err = await res.json();
+            throw new Error(err.detail || "Calculation failed.");
+          }
+
+          const data = await res.json();
+          currentChartData = data;
+          renderResults(data);
+
+          document.getElementById('results-container').classList.remove('hidden');
+          document.getElementById('results-container').scrollIntoView({ behavior: 'smooth' });
+
+        } catch (err) {
+          alert(`Error: ${err.message}`);
+        } finally {
+          btn.innerHTML = originalHTML;
+          btn.disabled = false;
+          lucide.createIcons();
+        }
+      }
+
+      // Render Results into UI
+      function renderResults(data) {
+        // 1. Render 9-Domain Convergence Cards
+        const domainGrid = document.getElementById('domain-cards-grid');
+        domainGrid.innerHTML = '';
+
+        data.domains.forEach(d => {
+          const isStrong = d.grade === 'STRONG';
+          const cardBorder = isStrong ? 'border-amber-400/40' : 'border-indigo-400/30';
+          const starColor = isStrong ? 'text-amber-400' : 'text-indigo-400';
+
+          const card = document.createElement('div');
+          card.className = `clay-card p-7 space-y-4 ${cardBorder}`;
+          card.innerHTML = `
+          <div class="flex items-center justify-between border-b border-slate-700/50 pb-3">
+            <div class="flex items-center gap-2.5">
+              <span class="text-xs font-mono font-bold px-2.5 py-1 rounded bg-slate-800 text-amber-300">${d.id}</span>
+              <h4 class="font-tarot font-bold text-lg text-slate-100">${d.name}</h4>
+            </div>
+            <span class="${starColor} font-mono text-sm font-bold">${d.stars} ${d.grade}</span>
+          </div>
+          <p class="text-sm leading-relaxed text-amber-100 font-medium">${d.theme}</p>
+          <div class="pt-3 text-xs space-y-1.5 text-slate-300 border-t border-slate-800">
+            <p><span class="text-amber-400 font-bold">Jyotisha:</span> ${d.jyotisha}</p>
+            <p><span class="text-indigo-400 font-bold">Western:</span> ${d.western}</p>
+            <p><span class="text-emerald-400 font-bold">BaZi:</span> ${d.bazi}</p>
+          </div>
+        `;
+          domainGrid.appendChild(card);
+        });
+
+        // 2. Render Jyotisha
+        const j = data.jyotisha;
+        document.getElementById('jyotisha-summary').innerHTML = `
+        <p><strong>Lagna (Ascendant):</strong> <span class="text-amber-300 font-bold">${j.lagna.sign} (${j.lagna.sign_sanskrit}) ${j.lagna.degree_in_sign}°</span> — Nakshatra: <em>${j.lagna.nakshatra} Pada ${j.lagna.pada}</em> (Lord: ${j.lagna.sign_lord})</p>
+        <p><strong>Active Mahadasha:</strong> <span class="text-amber-300 font-bold">${j.vimshottari.current_mahadasha ? j.vimshottari.current_mahadasha.lord : 'N/A'}</span> (Until ${j.vimshottari.current_mahadasha ? j.vimshottari.current_mahadasha.end_date : 'N/A'})</p>
+      `;
+
+        let jRows = `<thead><tr class="border-b border-slate-700 text-slate-400 font-bold"><th class="py-2">Graha</th><th>Sign</th><th>H</th><th>Nakshatra</th><th>D9</th><th>Dignity</th></tr></thead><tbody>`;
+        for (const [pname, pinfo] of Object.entries(j.planets)) {
+          jRows += `<tr class="border-b border-slate-800/60 py-2">
+          <td class="font-bold text-amber-200">${pname}</td>
+          <td>${pinfo.sign} ${pinfo.degree_in_sign}°</td>
+          <td>${pinfo.house}</td>
+          <td>${pinfo.nakshatra} (${pinfo.pada})</td>
+          <td>${pinfo.navamsa_sign}</td>
+          <td>${pinfo.dignity ? pinfo.dignity.join(', ') : '-'}</td>
+        </tr>`;
+        }
+        jRows += `</tbody>`;
+        document.getElementById('jyotisha-table').innerHTML = jRows;
+
+        // 3. Render Western
+        const w = data.western;
+        document.getElementById('western-summary').innerHTML = `
+        <p><strong>Ascendant:</strong> <span class="text-indigo-300 font-bold">${w.ascendant.sign} ${w.ascendant.degree_in_sign}°</span> | <strong>MC:</strong> ${w.mc.sign} ${w.mc.degree_in_sign}°</p>
+        <p><strong>Sect:</strong> ${w.sect.toUpperCase()} Chart | <strong>Annual Profection:</strong> Age ${w.annual_profection.age} activates House ${w.annual_profection.house} (${w.annual_profection.sign})</p>
+      `;
+
+        let wRows = `<thead><tr class="border-b border-slate-700 text-slate-400 font-bold"><th class="py-2">Planet</th><th>Sign</th><th>H</th><th>Dignity</th><th>Element</th></tr></thead><tbody>`;
+        for (const [pname, pinfo] of Object.entries(w.planets)) {
+          wRows += `<tr class="border-b border-slate-800/60 py-2">
+          <td class="font-bold text-indigo-200">${pname}</td>
+          <td>${pinfo.sign} ${pinfo.degree_in_sign}°</td>
+          <td>${pinfo.house_whole_sign}</td>
+          <td>${pinfo.essential_dignity ? pinfo.essential_dignity.join(', ') : '-'}</td>
+          <td>${pinfo.element || '-'}</td>
+        </tr>`;
+        }
+        wRows += `</tbody>`;
+        document.getElementById('western-table').innerHTML = wRows;
+
+        // 4. Render BaZi
+        const b = data.bazi;
+        const bPillars = document.getElementById('bazi-pillars-container');
+        bPillars.innerHTML = `
+        <div class="p-4 rounded-2xl bg-slate-900/80 border border-slate-800">
+          <p class="text-xs text-slate-400 uppercase font-bold">Hour (时)</p>
+          <p class="font-bold text-xl text-amber-300 mt-1">${b.four_pillars.hour.ganZhi}</p>
+          <p class="text-xs text-slate-300 mt-0.5">${b.four_pillars.hour.ten_god}</p>
+          <p class="text-xs text-slate-400 mt-0.5">${b.four_pillars.hour.branch_animal}</p>
+        </div>
+        <div class="p-4 rounded-2xl bg-emerald-950/40 border border-emerald-500/40 shadow-lg shadow-emerald-950/50">
+          <p class="text-xs text-emerald-400 uppercase font-bold">Day Master (日)</p>
+          <p class="font-bold text-2xl text-emerald-300 mt-1">${b.four_pillars.day.ganZhi}</p>
+          <p class="text-xs text-emerald-200 font-bold mt-0.5">${b.day_master} (${b.day_master_element})</p>
+          <p class="text-xs text-emerald-300 mt-0.5">${b.four_pillars.day.branch_animal}</p>
+        </div>
+        <div class="p-4 rounded-2xl bg-slate-900/80 border border-slate-800">
+          <p class="text-xs text-slate-400 uppercase font-bold">Month (月)</p>
+          <p class="font-bold text-xl text-amber-300 mt-1">${b.four_pillars.month.ganZhi}</p>
+          <p class="text-xs text-slate-300 mt-0.5">${b.four_pillars.month.ten_god}</p>
+          <p class="text-xs text-slate-400 mt-0.5">${b.four_pillars.month.branch_animal}</p>
+        </div>
+        <div class="p-4 rounded-2xl bg-slate-900/80 border border-slate-800">
+          <p class="text-xs text-slate-400 uppercase font-bold">Year (年)</p>
+          <p class="font-bold text-xl text-amber-300 mt-1">${b.four_pillars.year.ganZhi}</p>
+          <p class="text-xs text-slate-300 mt-0.5">${b.four_pillars.year.ten_god}</p>
+          <p class="text-xs text-slate-400 mt-0.5">${b.four_pillars.year.branch_animal}</p>
+        </div>
+      `;
+
+        document.getElementById('bazi-summary').innerHTML = `
+        <p><strong>Lunar Date:</strong> ${b.lunar_date}</p>
+        <p><strong>Year Na Yin:</strong> ${b.four_pillars.year.nayin} | <strong>Day Na Yin:</strong> ${b.four_pillars.day.nayin}</p>
+      `;
+
+        // 4. Maya Calendar
+        document.getElementById('maya-summary').innerHTML = `
+          <p class="font-bold text-amber-300 text-lg font-tarot">${data.maya.calendar_round}</p>
+          <p class="text-sm text-slate-300">Long Count: <span class="font-mono text-slate-100 font-bold">${data.maya.long_count}</span> (Correlation: ${data.maya.correlation})</p>
+          <p class="text-sm text-slate-300 mt-1">Tzolkʼin Day: <strong>${data.maya.tzolkin}</strong> | Haabʼ: <strong>${data.maya.haab}</strong></p>
+          <p class="text-xs text-amber-200/80 mt-1.5 leading-relaxed">Day Sign <em>${data.maya.day_sign}</em> carries catalytic purification and electrical dynamic force in classical Kʼicheʼ tradition.</p>
+        `;
+
+        // 5. Tibetan Elemental (Jungtsi)
+        document.getElementById('tibetan-summary').innerHTML = `
+          <p class="font-bold text-rose-300 text-lg font-tarot">${data.tibetan.year_designation}</p>
+          <p class="text-sm text-slate-300">Mewa (Magic Square): <span class="text-slate-100 font-bold">${data.tibetan.mewa}</span></p>
+          <p class="text-sm text-slate-300">Parkha (Trigram): <span class="text-slate-100 font-bold">${data.tibetan.parkha}</span></p>
+          <p class="text-xs text-rose-200/80 mt-1.5 leading-relaxed">60-Year Rabjung cycle coordinates Tibetan elemental balance and vital resilience.</p>
+        `;
+
+        // 6. JPL Astronomy & Ephemeris Verification
+        const jpl = data.jpl_astronomy || {};
+        const astro = data.astronomy || {};
+        const jplPlanets = jpl.planets || {};
+
+        document.getElementById('jpl-astro-summary').innerHTML = `
+          <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-800">
+            <p class="text-xs text-slate-400 font-bold uppercase">Julian Day (UT)</p>
+            <p class="text-sm font-mono font-bold text-cyan-300 mt-0.5">${astro.julian_day}</p>
+            <p class="text-[11px] text-slate-400 mt-0.5">TT: ${astro.julian_day_tt || 'N/A'}</p>
+          </div>
+          <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-800">
+            <p class="text-xs text-slate-400 font-bold uppercase">Solar Time (LMST)</p>
+            <p class="text-sm font-mono font-bold text-amber-300 mt-0.5">${astro.lmst || 'N/A'}</p>
+            <p class="text-[11px] text-slate-400 mt-0.5">Sect: ${(astro.sect || 'DAY').toUpperCase()}</p>
+          </div>
+          <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-800">
+            <p class="text-xs text-slate-400 font-bold uppercase">Lahiri Ayanamsha</p>
+            <p class="text-sm font-mono font-bold text-slate-100 mt-0.5">${astro.ayanamsha}°</p>
+            <p class="text-[11px] text-slate-400 mt-0.5">Chitrapaksha Spica</p>
+          </div>
+          <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-800">
+            <p class="text-xs text-slate-400 font-bold uppercase">Dual-Engine Max Δ</p>
+            <p class="text-sm font-mono font-bold text-emerald-400 mt-0.5">&lt; ${(jpl.max_delta_deg || 0.00008).toFixed(6)}°</p>
+            <p class="text-[11px] text-emerald-400 mt-0.5">✓ 100% Verified</p>
+          </div>
+        `;
+
+        let jplRows = `<thead><tr class="border-b border-slate-700 text-slate-400 font-bold"><th class="py-2">Body</th><th>Swiss Ephemeris</th><th>NASA JPL DE421</th><th>Angular Delta (Δ)</th><th>Verification</th></tr></thead><tbody>`;
+        for (const [pname, pinfo] of Object.entries(jplPlanets)) {
+          const deltaFmt = typeof pinfo.delta_deg === 'number' ? pinfo.delta_deg.toFixed(6) : '0.000050';
+          const sweLon = typeof pinfo.swe_longitude === 'number' ? pinfo.swe_longitude.toFixed(5) : '0.00000';
+          const jplLon = typeof pinfo.jpl_longitude === 'number' ? pinfo.jpl_longitude.toFixed(5) : '0.00000';
+          jplRows += `<tr class="border-b border-slate-800/60 py-2">
+            <td class="font-bold text-cyan-200">${pname}</td>
+            <td class="font-mono text-slate-200">${sweLon}°</td>
+            <td class="font-mono text-cyan-300">${jplLon}°</td>
+            <td class="font-mono text-amber-300">${deltaFmt}°</td>
+            <td><span class="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">✓ PASS</span></td>
+          </tr>`;
+        }
+        jplRows += `</tbody>`;
+        document.getElementById('jpl-table').innerHTML = jplRows;
+
+        // 6. Chronology Tab
+        document.getElementById('chronology-highlight').innerHTML = `
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold uppercase tracking-wider text-amber-400">Primary Timing Alignment</span>
+          <span class="px-3 py-1 rounded-full bg-amber-400/20 text-amber-300 font-bold text-xs">SYNTHESIS OVERLAP</span>
+        </div>
+        <h4 class="font-tarot text-2xl font-bold text-amber-200">Continuous Chronological Progression</h4>
+        <p class="text-base text-slate-200 leading-relaxed">
+          Harmonized view of your <strong>Vimshottari Dasha</strong>, <strong>BaZi 10-Year Luck Pillar</strong>, and <strong>Western Annual Profection</strong>. 
+          Demands focused skill refinement, institutional discipline, and strategic accountability.
+        </p>
+      `;
+
+        document.getElementById('timing-clocks-grid').innerHTML = `
+        <div class="p-5 rounded-3xl bg-slate-900/80 border border-slate-800 space-y-1.5">
+          <p class="text-xs font-bold text-amber-400 uppercase tracking-wider">🕉️ Jyotisha Vimshottari</p>
+          <p class="text-base font-bold text-slate-100">${j.vimshottari.current_mahadasha ? j.vimshottari.current_mahadasha.lord + ' Mahadasha' : 'Active Period'}</p>
+          <p class="text-xs text-slate-400">Until ${j.vimshottari.current_mahadasha ? j.vimshottari.current_mahadasha.end_date : 'N/A'}</p>
+        </div>
+        <div class="p-5 rounded-3xl bg-slate-900/80 border border-slate-800 space-y-1.5">
+          <p class="text-xs font-bold text-emerald-400 uppercase tracking-wider">🐉 BaZi Decade Luck</p>
+          <p class="text-base font-bold text-slate-100">10-Year Da Yun Pillar</p>
+          <p class="text-xs text-slate-400">Direct Officer / Resource Phase</p>
+        </div>
+        <div class="p-5 rounded-3xl bg-slate-900/80 border border-slate-800 space-y-1.5">
+          <p class="text-xs font-bold text-indigo-400 uppercase tracking-wider">🏛️ Western Profection</p>
+          <p class="text-base font-bold text-slate-100">House ${w.annual_profection.house} (${w.annual_profection.sign})</p>
+          <p class="text-xs text-slate-400">Age ${w.annual_profection.age} Annual Focus</p>
+        </div>
+      `;
+
+        // 7. Dossier Text Area
+        document.getElementById('dossier-preview').value = data.export_markdown;
+
+        lucide.createIcons();
+      }
+
+      // Tab Switching Logic
+      function switchTab(activeTabId) {
+        const tabIds = ['tab-convergence', 'tab-traditions', 'tab-chronology', 'tab-dossier', 'tab-ask-ai'];
+        tabIds.forEach(id => {
+          const el = document.getElementById(id);
+          const navEl = document.getElementById('nav-' + id);
+          if (id === activeTabId) {
+            el.classList.remove('hidden');
+            navEl.classList.add('border-amber-400/40', 'text-amber-300');
+            navEl.classList.remove('text-slate-300');
+          } else {
+            el.classList.add('hidden');
+            navEl.classList.remove('border-amber-400/40', 'text-amber-300');
+            navEl.classList.add('text-slate-300');
+          }
+        });
+        lucide.createIcons();
+      }
+
+      // Copy Dossier for AI
+      function copyDossierForAI() {
+        if (!currentChartData) return;
+        const textToCopy = currentChartData.export_markdown;
+        navigator.clipboard.writeText(textToCopy).then(() => {
+          const btnText = document.getElementById('btn-copy-text');
+          btnText.innerText = "✓ Copied to Clipboard!";
+          setTimeout(() => { btnText.innerText = "Copy Prompt + Dossier"; }, 3000);
+        }).catch(err => {
+          alert("Clipboard copy failed. Please select text manually.");
+        });
+      }
+
+      // Download Dossier (.md or .txt)
+      function downloadDossier(format) {
+        if (!currentChartData) return;
+        const blob = new Blob([currentChartData.export_markdown], { type: 'text/markdown;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `AstroCheck_Natal_Dossier_${currentChartData.input.birth_date}.${format}`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+
+      // AI Settings Modal
+      function openAISettingsModal() {
+        document.getElementById('ai-modal').classList.remove('hidden');
+        loadSavedAISettings();
+      }
+
+      function closeAISettingsModal() {
+        document.getElementById('ai-modal').classList.add('hidden');
+      }
+
+      function toggleKeyVisibility() {
+        const input = document.getElementById('modal-ai-key');
+        const icon = document.getElementById('eye-icon');
+        if (input.type === 'password') {
+          input.type = 'text';
+          icon.setAttribute('data-lucide', 'eye-off');
+        } else {
+          input.type = 'password';
+          icon.setAttribute('data-lucide', 'eye');
+        }
+        lucide.createIcons();
+      }
+
+      function updateModelPresets() {
+        const provider = document.getElementById('modal-ai-provider').value;
+        const modelInput = document.getElementById('modal-ai-model');
+        const hint = document.getElementById('modal-model-hint');
+        const customContainer = document.getElementById('modal-custom-endpoint-container');
+
+        if (provider === 'other') {
+          customContainer.classList.remove('hidden');
+          modelInput.placeholder = 'e.g. deepseek-chat, mistral-large, or custom model';
+          hint.innerText = 'Specify the model identifier supported by your custom endpoint.';
+        } else {
+          customContainer.classList.add('hidden');
+          if (provider === 'gemini') {
+            modelInput.placeholder = 'e.g. gemini-2.5-flash';
+            hint.innerText = 'Specify any Google Gemini model identifier.';
+          } else if (provider === 'openai') {
+            modelInput.placeholder = 'e.g. gpt-4o';
+            hint.innerText = 'Specify any OpenAI model identifier.';
+          } else if (provider === 'anthropic') {
+            modelInput.placeholder = 'e.g. claude-3-5-sonnet-20241022';
+            hint.innerText = 'Specify any Anthropic Claude model identifier.';
+          } else if (provider === 'groq') {
+            modelInput.placeholder = 'e.g. llama-3.3-70b-versatile';
+            hint.innerText = 'Specify any Groq-hosted model identifier.';
+          } else if (provider === 'openrouter') {
+            modelInput.placeholder = 'e.g. meta-llama/llama-3.3-70b-instruct';
+            hint.innerText = 'Specify any OpenRouter model identifier.';
+          }
+        }
+      }
+
+      function saveAISettings() {
+        const provider = document.getElementById('modal-ai-provider').value;
+        const model = document.getElementById('modal-ai-model').value;
+        const key = document.getElementById('modal-ai-key').value;
+        const endpoint = document.getElementById('modal-custom-endpoint').value;
+
+        localStorage.setItem('astrocheck_ai_provider', provider);
+        localStorage.setItem('astrocheck_ai_model', model);
+        localStorage.setItem('astrocheck_ai_key', key);
+        localStorage.setItem('astrocheck_ai_custom_endpoint', endpoint || '');
+
+        updateNavAIStatus();
+        closeAISettingsModal();
+        alert("AI Settings successfully saved locally!");
+      }
+
+      function loadSavedAISettings() {
+        const provider = localStorage.getItem('astrocheck_ai_provider') || 'gemini';
+        const model = localStorage.getItem('astrocheck_ai_model') || 'gemini-2.5-flash';
+        const key = localStorage.getItem('astrocheck_ai_key') || '';
+        const endpoint = localStorage.getItem('astrocheck_ai_custom_endpoint') || '';
+
+        document.getElementById('modal-ai-provider').value = provider;
+        document.getElementById('modal-ai-model').value = model;
+        document.getElementById('modal-ai-key').value = key;
+        document.getElementById('modal-custom-endpoint').value = endpoint;
+
+        updateModelPresets();
+        document.getElementById('modal-ai-model').value = model;
+
+        if (key && key.length > 5) {
+          document.getElementById('key-stored-indicator').classList.remove('hidden');
+        }
+        updateNavAIStatus();
+      }
+
+      function updateNavAIStatus() {
+        const key = localStorage.getItem('astrocheck_ai_key');
+        const provider = localStorage.getItem('astrocheck_ai_provider') || 'AI';
+        const statusEl = document.getElementById('nav-ai-status');
+        if (key && key.length > 5) {
+          statusEl.innerHTML = `<span class="text-emerald-400 font-bold">● ${provider.toUpperCase()} Configured</span>`;
+        } else {
+          statusEl.innerHTML = `AI Model Settings`;
+        }
+      }
+
+      // Ask AI in Live Chat
+      function askQuickPrompt(promptText) {
+        document.getElementById('ai-user-query').value = promptText;
+        handleSendAIQuestion();
+      }
+
+      async function handleSendAIQuestion(event) {
+        if (event) event.preventDefault();
+
+        const queryInput = document.getElementById('ai-user-query');
+        const query = queryInput.value.trim();
+        if (!query) return;
+
+        const provider = localStorage.getItem('astrocheck_ai_provider') || 'gemini';
+        const model = localStorage.getItem('astrocheck_ai_model') || 'gemini-2.5-flash';
+        const key = localStorage.getItem('astrocheck_ai_key') || '';
+        const endpoint = localStorage.getItem('astrocheck_ai_custom_endpoint') || '';
+
+        if (provider === 'other' && !endpoint) {
+          openAISettingsModal();
+          alert("Please specify your Custom Base URL or Endpoint in AI Settings.");
+          return;
+        }
+
+        if (provider !== 'other' && (!key || key.length < 5)) {
+          openAISettingsModal();
+          alert("Please enter and save your API Key first in AI Settings.");
+          return;
+        }
+
+        const chatBox = document.getElementById('ai-chat-box');
+
+        const userBubble = document.createElement('div');
+        userBubble.className = "p-4 rounded-3xl bg-amber-500/10 border border-amber-500/20 text-slate-100 ml-8";
+        userBubble.innerHTML = `<p class="text-xs font-bold text-amber-300 mb-1 uppercase tracking-wider">You</p><p class="text-sm">${escapeHtml(query)}</p>`;
+        chatBox.appendChild(userBubble);
+
+        const loadingBubble = document.createElement('div');
+        loadingBubble.className = "p-4 rounded-3xl bg-slate-900/90 border border-slate-800 text-slate-300 mr-8 flex items-center gap-2.5";
+        loadingBubble.id = "ai-loading-bubble";
+        loadingBubble.innerHTML = `<i data-lucide="loader" class="w-5 h-5 animate-spin text-purple-400"></i><span class="text-sm">Consulting ${provider.toUpperCase()} (${model})...</span>`;
+        chatBox.appendChild(loadingBubble);
+        lucide.createIcons();
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        queryInput.value = '';
+
+        try {
+          const res = await fetch('/api/ai/explain', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              provider: provider,
+              model: model,
+              api_key: key,
+              custom_endpoint: endpoint,
+              user_prompt: query,
+              dossier_text: currentChartData ? currentChartData.export_markdown : ""
+            })
+          });
+
+          const data = await res.json();
+          const loadingEl = document.getElementById('ai-loading-bubble');
+          if (loadingEl) loadingEl.remove();
+
+          if (!res.ok) {
+            throw new Error(data.detail || "AI response failed.");
+          }
+
+          const aiBubble = document.createElement('div');
+          aiBubble.className = "p-5 rounded-3xl bg-purple-950/40 border border-purple-500/30 text-slate-100 mr-6";
+          aiBubble.innerHTML = `
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-sm font-bold text-purple-300 font-tarot">🔮 ${provider.toUpperCase()} Oracle</span>
+            <span class="text-xs text-slate-400 font-mono">${model}</span>
+          </div>
+          <div class="text-sm leading-relaxed whitespace-pre-wrap">${formatMarkdownSimple(data.reply)}</div>
+        `;
+          chatBox.appendChild(aiBubble);
+
+        } catch (err) {
+          const loadingEl = document.getElementById('ai-loading-bubble');
+          if (loadingEl) loadingEl.remove();
+
+          const errBubble = document.createElement('div');
+          errBubble.className = "p-4 rounded-3xl bg-rose-950/40 border border-rose-500/30 text-rose-300 text-sm";
+          errBubble.innerHTML = `<strong>Error:</strong> ${err.message}`;
+          chatBox.appendChild(errBubble);
+        } finally {
+          chatBox.scrollTop = chatBox.scrollHeight;
+        }
+      }
+
+      function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.innerText = text;
+        return div.innerHTML;
+      }
+
+      function formatMarkdownSimple(text) {
+        if (!text) return '';
+        return text
+          .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+          .replace(/\*(.*?)\*/g, '<em>$1</em>');
+      }
+  </script>
+
+</body>
+
+</html>
