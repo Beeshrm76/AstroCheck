@@ -934,11 +934,6 @@
               <i data-lucide="copy" class="w-5 h-5"></i>
               <span id="btn-copy-text">Copy Prompt + Dossier</span>
             </button>
-            <button onclick="downloadDossierPDF()"
-              class="clay-button-primary px-5 py-3.5 text-sm font-bold flex items-center gap-2 bg-gradient-to-r from-amber-500/30 to-purple-600/30 border border-amber-400/50 hover:border-amber-300">
-              <i data-lucide="file-text" class="w-5 h-5 text-amber-300"></i>
-              <span>Download PDF</span>
-            </button>
             <button onclick="downloadDossier('md')"
               class="clay-button-secondary px-5 py-3.5 text-sm font-semibold flex items-center gap-2">
               <i data-lucide="download" class="w-5 h-5"></i>
@@ -2213,15 +2208,15 @@
               <span class="text-xs text-slate-400 font-mono px-2 py-0.5 rounded bg-slate-900 border border-slate-800">${model}</span>
             </div>
             <!-- Two formats: Copiable Text Format & Download PDF Format -->
-            <div class="flex items-center gap-2">
+            <div class="flex flex-wrap items-center gap-2.5">
               <button onclick="copyAIReply('${replyId}')" id="btn-copy-${replyId}"
-                class="px-3.5 py-1.5 rounded-xl bg-purple-500/20 hover:bg-purple-500/30 text-purple-200 border border-purple-500/40 text-xs font-bold flex items-center gap-1.5 transition-colors">
-                <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                class="px-4 py-2 rounded-xl bg-purple-500/20 hover:bg-purple-500/30 text-purple-200 border border-purple-500/40 text-xs font-bold flex items-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98]">
+                <i data-lucide="copy" class="w-4 h-4"></i>
                 <span>Copy Text Format</span>
               </button>
-              <button onclick="downloadAIPDF('${replyId}')"
-                class="px-3.5 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-500/40 text-xs font-bold flex items-center gap-1.5 transition-colors">
-                <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
+              <button onclick="downloadAIPDF('${replyId}')" id="btn-pdf-${replyId}"
+                class="px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500/25 to-purple-600/25 hover:from-amber-500/40 hover:to-purple-600/40 text-amber-200 border border-amber-400/50 text-xs font-bold flex items-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-md shadow-amber-950/40">
+                <i data-lucide="file-text" class="w-4 h-4 text-amber-300"></i>
                 <span>Download PDF Format</span>
               </button>
             </div>
@@ -2272,6 +2267,13 @@
         const replyText = (window['ai_replies'] && window['ai_replies'][replyId]) || '';
         if (!replyText) return;
 
+        const btn = document.getElementById('btn-pdf-' + replyId);
+        const originalContent = btn ? btn.innerHTML : null;
+        if (btn) {
+          btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin text-amber-300"></i><span>Generating PDF...</span>`;
+          lucide.createIcons();
+        }
+
         const filename = `AstroCheck_AI_Oracle_Analysis_${Date.now()}.pdf`;
 
         const wrap = document.createElement('div');
@@ -2317,6 +2319,10 @@
           console.error("PDF generation error:", e);
           alert("PDF generation failed: " + e.message);
         } finally {
+          if (btn && originalContent) {
+            btn.innerHTML = originalContent;
+            lucide.createIcons();
+          }
           document.body.removeChild(wrap);
         }
       }
