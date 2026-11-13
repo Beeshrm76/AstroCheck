@@ -1204,7 +1204,7 @@ def calculate_chart(
 > 4. **Retrospective Timeline (2010–2025):**
 >    - Generate a 5-column table (Time Period | Planetary Positions & Cycles | Academic & Development | Social & Family Life | Internal & Health Themes) covering past life phases.
 
-> Synthesize across Jyotisha, Hellenistic Western, BaZi, Maya, and Tibetan systems. Highlight where traditions converge into unified life themes. Treat findings as symbolic archetypes rather than fatalistic prophecies.
+> **CRITICAL COMPLETION MANDATE:** You MUST complete all sections fully through the final row of the Retrospective Timeline. Never stop or truncate mid-response. To ensure complete delivery without hitting token ceilings, keep each table cell description crisp, dense, and punchy (1 to 2 sentences per cell). Synthesize across Jyotisha, Hellenistic Western, BaZi, Maya, and Tibetan systems with no fatalism. Treat findings as symbolic archetypes rather than fatalistic prophecies.
 """
 
     return {

@@ -71,8 +71,9 @@ class AIExplainRequest(BaseModel):
         "## Retrospective Timeline: Expected Past Events (2010 – 2025)\n"
         "- Format: 5-Column Table\n"
         "- Headers: Time Period | Planetary Positions & Cycles | Academic & Development | Social & Family Life | Internal & Health Themes\n"
-        "- Rows: Historical timeframes breaking down past life phases\n\n"
-        "Synthesize across Jyotisha, Hellenistic Western, BaZi, Maya, and Tibetan systems. Highlight converging archetypal themes with no fatalism."
+        "- Rows: Historical timeframes breaking down past life phases from childhood to present\n\n"
+        "---\n\n"
+        "CRITICAL COMPLETION MANDATE: You MUST complete all sections fully through the very last row of the Retrospective Timeline. Never stop or truncate mid-response. To guarantee complete delivery without hitting output limits, keep each table cell description crisp, dense, and punchy (1 to 2 sentences per cell). Synthesize across Jyotisha, Hellenistic Western, BaZi, Maya, and Tibetan systems with no fatalism."
     )
     user_prompt: str
     dossier_text: Optional[str] = ""

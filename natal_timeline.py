@@ -479,3 +479,4 @@ if __name__ == "__main__":
     print(domain_table("5B. Love Life & Partnerships", LOVE))
     print(domain_table("5C. Finance & Wealth Accumulation", FINANCE))
     print(domain_table("5D. Health & Internal Vitality (symbolic, not medical advice)", HEALTH))
+

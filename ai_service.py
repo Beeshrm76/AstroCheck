@@ -34,13 +34,15 @@ def query_ai_model(
             payload = {
                 "system_instruction": {"parts": [{"text": system_prompt}]},
                 "contents": [{"parts": [{"text": full_prompt}]}],
-                "generationConfig": {"temperature": 0.7, "maxOutputTokens": 8192}
+                "generationConfig": {"temperature": 0.7, "maxOutputTokens": 16384}
             }
-            res = requests.post(url, json=payload, timeout=90)
+            res = requests.post(url, json=payload, timeout=120)
             if res.status_code != 200:
                 return {"error": f"Gemini Error ({res.status_code}): {res.text}"}
             data = res.json()
-            reply = data["candidates"][0]["content"]["parts"][0]["text"]
+            candidate = data.get("candidates", [{}])[0]
+            parts = candidate.get("content", {}).get("parts", [])
+            reply = "".join(p.get("text", "") for p in parts if "text" in p)
             return {"reply": reply, "provider": "gemini", "model": selected_model}
 
         # 2. OpenAI
@@ -58,9 +60,9 @@ def query_ai_model(
                     {"role": "user", "content": full_prompt}
                 ],
                 "temperature": 0.7,
-                "max_tokens": 8192
+                "max_tokens": 16384
             }
-            res = requests.post(url, headers=headers, json=payload, timeout=90)
+            res = requests.post(url, headers=headers, json=payload, timeout=120)
             if res.status_code != 200:
                 return {"error": f"OpenAI Error ({res.status_code}): {res.text}"}
             data = res.json()
@@ -76,13 +78,14 @@ def query_ai_model(
                 "anthropic-version": "2023-06-01",
                 "Content-Type": "application/json"
             }
+            max_tok = 16384 if "3-7" in selected_model else 8192
             payload = {
                 "model": selected_model,
-                "max_tokens": 8192,
+                "max_tokens": max_tok,
                 "system": system_prompt,
                 "messages": [{"role": "user", "content": full_prompt}]
             }
-            res = requests.post(url, headers=headers, json=payload, timeout=90)
+            res = requests.post(url, headers=headers, json=payload, timeout=120)
             if res.status_code != 200:
                 return {"error": f"Anthropic Error ({res.status_code}): {res.text}"}
             data = res.json()
@@ -104,9 +107,9 @@ def query_ai_model(
                     {"role": "user", "content": full_prompt}
                 ],
                 "temperature": 0.7,
-                "max_tokens": 8192
+                "max_tokens": 16384
             }
-            res = requests.post(url, headers=headers, json=payload, timeout=90)
+            res = requests.post(url, headers=headers, json=payload, timeout=120)
             if res.status_code != 200:
                 return {"error": f"Groq Error ({res.status_code}): {res.text}"}
             data = res.json()
@@ -130,9 +133,9 @@ def query_ai_model(
                     {"role": "user", "content": full_prompt}
                 ],
                 "temperature": 0.7,
-                "max_tokens": 8192
+                "max_tokens": 16384
             }
-            res = requests.post(url, headers=headers, json=payload, timeout=90)
+            res = requests.post(url, headers=headers, json=payload, timeout=120)
             if res.status_code != 200:
                 return {"error": f"OpenRouter Error ({res.status_code}): {res.text}"}
             data = res.json()
@@ -164,9 +167,9 @@ def query_ai_model(
                     {"role": "user", "content": full_prompt}
                 ],
                 "temperature": 0.7,
-                "max_tokens": 8192
+                "max_tokens": 16384
             }
-            res = requests.post(endpoint, headers=headers, json=payload, timeout=60)
+            res = requests.post(endpoint, headers=headers, json=payload, timeout=120)
             if res.status_code != 200:
                 return {"error": f"Custom API Error ({res.status_code}): {res.text}"}
             data = res.json()

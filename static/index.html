@@ -360,7 +360,7 @@
       padding: 24px 28px !important;
       box-sizing: border-box !important;
       width: 794px !important; /* Standard A4 width at 96 DPI */
-      min-height: 1120px !important;
+      min-height: auto !important;
     }
     .cosmic-pdf-wrap * {
       box-sizing: border-box !important;
@@ -2129,15 +2129,38 @@
         const safeDate = String(currentChartData.input.birth_date).replace(/[\/\\:]/g, '_');
         const filename = `AstroCheck_Natal_Dossier_${safeDate}.pdf`;
 
+        const prevScrollY = window.scrollY;
+
+        // Create fullscreen render overlay to ensure positive layout coordinates (fixes blank page bug)
+        const modalContainer = document.createElement('div');
+        modalContainer.id = 'pdf-render-modal';
+        modalContainer.style.position = 'fixed';
+        modalContainer.style.top = '0';
+        modalContainer.style.left = '0';
+        modalContainer.style.width = '100vw';
+        modalContainer.style.height = '100vh';
+        modalContainer.style.backgroundColor = '#070814';
+        modalContainer.style.zIndex = '999999';
+        modalContainer.style.overflowY = 'auto';
+        modalContainer.style.display = 'flex';
+        modalContainer.style.flexDirection = 'column';
+        modalContainer.style.alignItems = 'center';
+        modalContainer.style.padding = '30px 0';
+
+        const toast = document.createElement('div');
+        toast.className = 'fixed top-6 px-6 py-3 rounded-full bg-slate-900 border border-amber-400 text-amber-300 font-bold text-sm shadow-2xl flex items-center gap-3 z-[1000000]';
+        toast.innerHTML = `<div class="w-4 h-4 border-2 border-amber-400 border-t-transparent rounded-full animate-spin"></div><span>Generating Celestial Dossier PDF...</span>`;
+        document.body.appendChild(toast);
+
         const wrap = document.createElement('div');
         wrap.className = 'cosmic-pdf-wrap';
-        wrap.style.position = 'absolute';
-        wrap.style.left = '0px';
-        wrap.style.top = '0px';
-        wrap.style.width = '794px';
-        wrap.style.zIndex = '-9999';
-        wrap.style.opacity = '1';
-        wrap.style.pointerEvents = 'none';
+        wrap.style.width = '800px';
+        wrap.style.maxWidth = '800px';
+        wrap.style.backgroundColor = '#0b0d1b';
+        wrap.style.color = '#e2e8f0';
+        wrap.style.margin = '0 auto';
+        wrap.style.boxShadow = '0 0 50px rgba(0,0,0,0.85)';
+        wrap.style.borderRadius = '8px';
 
         const input = currentChartData.input;
         const bannerHtml = `
@@ -2161,33 +2184,43 @@
           </div>
         `;
 
-        document.body.appendChild(wrap);
+        modalContainer.appendChild(wrap);
+        document.body.appendChild(modalContainer);
+
+        window.scrollTo(0, 0);
+        modalContainer.scrollTop = 0;
+
+        await new Promise(r => setTimeout(r, 250));
 
         const opt = {
           margin: [8, 8, 8, 8],
           filename: filename,
           image: { type: 'jpeg', quality: 0.98 },
           html2canvas: {
-            scale: 2,
+            scale: 1.5,
             useCORS: true,
             backgroundColor: '#0b0d1b',
-            scrollX: 0,
             scrollY: 0,
-            windowWidth: 794,
+            scrollX: 0,
             logging: false
           },
-          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+          pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
         };
 
         try {
-          await html2pdf().set(opt).from(wrap).save();
+          await html2pdf().from(wrap).set(opt).save();
         } catch (e) {
           console.error("PDF generation failed:", e);
-          alert("PDF generation failed. You can use 'Download .MD' or 'Download .TXT' as alternatives.");
+          alert("PDF generation failed: " + e.message);
         } finally {
-          if (document.body.contains(wrap)) {
-            document.body.removeChild(wrap);
+          if (document.body.contains(toast)) {
+            document.body.removeChild(toast);
           }
+          if (document.body.contains(modalContainer)) {
+            document.body.removeChild(modalContainer);
+          }
+          window.scrollTo(0, prevScrollY);
         }
       }
 
@@ -2442,15 +2475,40 @@
 
         const filename = `AstroCheck_AI_Oracle_Analysis_${Date.now()}.pdf`;
 
+        // 1. Save scroll position
+        const prevScrollY = window.scrollY;
+
+        // 2. Create fullscreen render overlay to guarantee positive layout coordinates and zero offset
+        const modalContainer = document.createElement('div');
+        modalContainer.id = 'pdf-render-modal';
+        modalContainer.style.position = 'fixed';
+        modalContainer.style.top = '0';
+        modalContainer.style.left = '0';
+        modalContainer.style.width = '100vw';
+        modalContainer.style.height = '100vh';
+        modalContainer.style.backgroundColor = '#070814';
+        modalContainer.style.zIndex = '999999';
+        modalContainer.style.overflowY = 'auto';
+        modalContainer.style.display = 'flex';
+        modalContainer.style.flexDirection = 'column';
+        modalContainer.style.alignItems = 'center';
+        modalContainer.style.padding = '30px 0';
+
+        const toast = document.createElement('div');
+        toast.className = 'fixed top-6 px-6 py-3 rounded-full bg-slate-900 border border-amber-400 text-amber-300 font-bold text-sm shadow-2xl flex items-center gap-3 z-[1000000]';
+        toast.innerHTML = `<div class="w-4 h-4 border-2 border-amber-400 border-t-transparent rounded-full animate-spin"></div><span>Generating Celestial Oracle PDF...</span>`;
+        document.body.appendChild(toast);
+
+        // 3. Create wrap inside modalContainer
         const wrap = document.createElement('div');
         wrap.className = 'cosmic-pdf-wrap';
-        wrap.style.position = 'absolute';
-        wrap.style.left = '0px';
-        wrap.style.top = '0px';
-        wrap.style.width = '794px';
-        wrap.style.zIndex = '-9999';
-        wrap.style.opacity = '1';
-        wrap.style.pointerEvents = 'none';
+        wrap.style.width = '800px';
+        wrap.style.maxWidth = '800px';
+        wrap.style.backgroundColor = '#0b0d1b';
+        wrap.style.color = '#e2e8f0';
+        wrap.style.margin = '0 auto';
+        wrap.style.boxShadow = '0 0 50px rgba(0,0,0,0.85)';
+        wrap.style.borderRadius = '8px';
 
         const bannerHtml = `
           <div class="cosmic-pdf-banner">
@@ -2473,26 +2531,32 @@
           </div>
         `;
 
-        document.body.appendChild(wrap);
+        modalContainer.appendChild(wrap);
+        document.body.appendChild(modalContainer);
+
+        window.scrollTo(0, 0);
+        modalContainer.scrollTop = 0;
+
+        await new Promise(r => setTimeout(r, 250));
 
         const opt = {
           margin: [8, 8, 8, 8],
           filename: filename,
           image: { type: 'jpeg', quality: 0.98 },
           html2canvas: {
-            scale: 2,
+            scale: 1.5,
             useCORS: true,
             backgroundColor: '#0b0d1b',
-            scrollX: 0,
             scrollY: 0,
-            windowWidth: 794,
+            scrollX: 0,
             logging: false
           },
-          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+          pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
         };
 
         try {
-          await html2pdf().set(opt).from(wrap).save();
+          await html2pdf().from(wrap).set(opt).save();
         } catch (e) {
           console.error("PDF generation error:", e);
           alert("PDF generation failed: " + e.message);
@@ -2501,9 +2565,13 @@
             btn.innerHTML = originalContent;
             lucide.createIcons();
           }
-          if (document.body.contains(wrap)) {
-            document.body.removeChild(wrap);
+          if (document.body.contains(toast)) {
+            document.body.removeChild(toast);
           }
+          if (document.body.contains(modalContainer)) {
+            document.body.removeChild(modalContainer);
+          }
+          window.scrollTo(0, prevScrollY);
         }
       }
 
@@ -2528,9 +2596,12 @@
           let line = lines[i].trim();
 
           // Handle table rows
-          if (line.startsWith('|') && line.endsWith('|')) {
+          if (line.startsWith('|') && line.includes('|')) {
             if (inList) { html += '</ul>'; inList = false; }
-            const cells = line.slice(1, -1).split('|').map(c => c.trim());
+            let inner = line;
+            if (inner.startsWith('|')) inner = inner.slice(1);
+            if (inner.endsWith('|')) inner = inner.slice(0, -1);
+            const cells = inner.split('|').map(c => c.trim());
             
             // Check if delimiter row like |---|---|
             if (cells.every(c => /^:?-+:?$/.test(c))) {
@@ -2567,6 +2638,10 @@
           }
 
           // Headers
+          if (line.startsWith('#### ')) {
+            html += `<h4 class="text-amber-300 font-bold text-xs uppercase mt-3 mb-1 tracking-wider">${processInline(line.slice(5))}</h4>`;
+            continue;
+          }
           if (line.startsWith('### ')) {
             html += `<h3>${processInline(line.slice(4))}</h3>`;
             continue;
