@@ -380,9 +380,14 @@
           <!-- Date of Birth -->
           <div>
             <label class="block text-sm font-bold text-slate-200 mb-2.5 uppercase tracking-wider">
-              Date of Birth <span class="text-rose-400">*</span>
+              Date of Birth (YYYY/MM/DD) <span class="text-rose-400">*</span>
             </label>
-            <input type="date" id="birth_date" required class="clay-input w-full px-5 py-4 text-base">
+            <div class="relative">
+              <input type="text" id="birth_date" required placeholder="YYYY/MM/DD (e.g. 2003/04/09)" maxlength="10" oninput="handleDateInputChange()" onblur="formatDateInputOnBlur()" class="clay-input w-full px-5 py-4 text-base pr-10 font-medium">
+              <button type="button" onclick="clearBirthDate()" class="absolute right-3.5 top-4 text-slate-400 hover:text-rose-400 transition-colors" title="Clear Date">
+                <i data-lucide="x" class="w-4 h-4"></i>
+              </button>
+            </div>
           </div>
 
           <!-- Time of Birth -->
@@ -943,10 +948,52 @@
     });
 
     // Clear and Delete location/time helpers
+    function clearBirthDate() {
+      document.getElementById('birth_date').value = '';
+      document.getElementById('birth_date').focus();
+    }
+
     function clearBirthTime() {
       document.getElementById('birth_time').value = '';
       document.getElementById('birth_time_ampm').value = 'PM';
       document.getElementById('birth_time').focus();
+    }
+
+    // Automatic formatting for Date of Birth (YYYY/MM/DD)
+    function handleDateInputChange() {
+      const el = document.getElementById('birth_date');
+      let val = el.value.replace(/[-.]/g, '/');
+      val = val.replace(/[^\d/]/g, '');
+
+      // Auto-insert slash after YYYY and MM
+      const digits = val.replace(/\D/g, '');
+      if (!val.includes('/') && digits.length > 4) {
+        if (digits.length <= 6) {
+          val = digits.slice(0, 4) + '/' + digits.slice(4);
+        } else {
+          val = digits.slice(0, 4) + '/' + digits.slice(4, 6) + '/' + digits.slice(6, 8);
+        }
+      } else if (val.split('/').length === 2 && digits.length > 6) {
+        val = digits.slice(0, 4) + '/' + digits.slice(4, 6) + '/' + digits.slice(6, 8);
+      }
+
+      el.value = val.slice(0, 10);
+    }
+
+    function formatDateInputOnBlur() {
+      const el = document.getElementById('birth_date');
+      let val = el.value.trim();
+      if (!val) return;
+
+      const parts = val.replace(/[-.]/g, '/').split('/').filter(Boolean);
+      if (parts.length === 3) {
+        let [y, m, d] = parts;
+        if (y.length === 4) {
+          m = m.padStart(2, '0');
+          d = d.padStart(2, '0');
+          el.value = `${y}/${m}/${d}`;
+        }
+      }
     }
 
     function clearBirthplace() {
@@ -1193,7 +1240,7 @@
     async function handleCalculate(event) {
       if (event) event.preventDefault();
 
-      const bDate = document.getElementById('birth_date').value;
+      const rawDate = document.getElementById('birth_date').value.trim();
       const rawTime = document.getElementById('birth_time').value.trim();
       const ampmSelect = document.getElementById('birth_time_ampm').value || 'PM';
       const latVal = document.getElementById('latitude').value.trim();
@@ -1201,10 +1248,35 @@
       const latDirSelect = document.getElementById('latitude_dir').value || 'N';
       const lonDirSelect = document.getElementById('longitude_dir').value || 'E';
 
-        if (!bDate || !rawTime || !latVal || !lonVal) {
-          alert("Please fill in your Date of Birth, Time of Birth, and Location Coordinates.");
-          return;
-        }
+      if (!rawDate || !rawTime || !latVal || !lonVal) {
+        alert("Please fill in your Date of Birth, Time of Birth, and Location Coordinates.");
+        return;
+      }
+
+      const dateMatch = rawDate.match(/^(\d{4})[/-](\d{1,2})[/-](\d{1,2})$/);
+      if (!dateMatch) {
+        alert("Please enter a valid Date of Birth in YYYY/MM/DD format (e.g. 2003/04/09).");
+        return;
+      }
+      const y = parseInt(dateMatch[1], 10);
+      const m = parseInt(dateMatch[2], 10);
+      const d = parseInt(dateMatch[3], 10);
+
+      if (y < 1800 || y > 2100) {
+        alert("Please enter a realistic birth year between 1800 and 2100.");
+        return;
+      }
+      if (m < 1 || m > 12) {
+        alert("Month must be between 01 and 12.");
+        return;
+      }
+      if (d < 1 || d > 31) {
+        alert("Day must be between 01 and 31.");
+        return;
+      }
+
+      const bDate = `${String(y).padStart(4, '0')}/${String(m).padStart(2, '0')}/${String(d).padStart(2, '0')}`;
+      document.getElementById('birth_date').value = bDate;
 
         const parsedTime = normalizeTimeInput(rawTime, ampmSelect);
         if (!parsedTime) {
@@ -1519,7 +1591,8 @@
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `AstroCheck_Natal_Dossier_${currentChartData.input.birth_date}.${format}`;
+        const safeDate = String(currentChartData.input.birth_date).replace(/[\/\\:]/g, '_');
+        a.download = `AstroCheck_Natal_Dossier_${safeDate}.${format}`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);

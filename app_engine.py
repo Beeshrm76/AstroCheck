@@ -184,8 +184,10 @@ def calculate_chart(
     custom_tz_offset_hours: Optional[float] = None
 ) -> Dict[str, Any]:
     
-    # Parse inputs
-    y, m, d = [int(x) for x in birth_date.split('-')]
+    # Parse inputs (supports YYYY/MM/DD, YYYY-MM-DD, or YYYY.MM.DD)
+    date_clean = birth_date.strip().replace('/', '-').replace('.', '-')
+    y, m, d = [int(x) for x in date_clean.split('-')[:3]]
+    birth_date_formatted = f"{y:04d}/{m:02d}/{d:02d}"
     bt = birth_time.strip().upper()
     is_pm = 'PM' in bt
     is_am = 'AM' in bt
@@ -840,7 +842,7 @@ def calculate_chart(
 
 ## 1. NATAL VERIFICATION DATA
 - **Subject / Birthplace:** {birthplace_name or 'Custom Location'} ({lat_cardinal}, {lon_cardinal})
-- **Birth Date (Gregorian):** {birth_date}
+- **Birth Date (Gregorian):** {birth_date_formatted}
 - **Local Civil Time:** {birth_time} ({tz_name}, UTC{'+' if utc_offset_hours >= 0 else ''}{utc_offset_hours:.2f})
 - **UTC Instant:** {utc_instant.strftime('%Y-%m-%dT%H:%M:%SZ')}
 - **Julian Day (UT):** {jd_ut:.6f} | **Civil Weekday:** {weekday}
@@ -927,7 +929,7 @@ def calculate_chart(
     return {
         'status': 'success',
         'input': {
-            'birth_date': birth_date,
+            'birth_date': birth_date_formatted,
             'birth_time': birth_time,
             'latitude': latitude,
             'longitude': longitude,
