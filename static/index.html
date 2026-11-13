@@ -639,7 +639,7 @@
         </div>
       </div>
 
-      <form id="natal-form" onsubmit="handleCalculate(event)" class="space-y-8">
+      <form id="natal-form" onsubmit="handleCalculate(event)" autocomplete="off" class="space-y-8">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-7">
 
           <!-- Date of Birth -->
@@ -648,7 +648,7 @@
               Date of Birth (YYYY/MM/DD) <span class="text-rose-400">*</span>
             </label>
             <div class="relative">
-              <input type="text" id="birth_date" required placeholder="YYYY/MM/DD" maxlength="10" oninput="handleDateInputChange()" onblur="formatDateInputOnBlur()" class="clay-input w-full px-5 py-4 text-base pr-10 font-medium">
+              <input type="text" id="birth_date" required placeholder="YYYY/MM/DD" maxlength="10" autocomplete="off" oninput="handleDateInputChange()" onblur="formatDateInputOnBlur()" class="clay-input w-full px-5 py-4 text-base pr-10 font-medium">
               <button type="button" onclick="clearBirthDate()" class="absolute right-3.5 top-4 text-slate-400 hover:text-rose-400 transition-colors" title="Clear Date">
                 <i data-lucide="x" class="w-4 h-4"></i>
               </button>
@@ -662,7 +662,7 @@
             </label>
             <div class="flex gap-2">
               <div class="relative flex-1">
-                <input type="text" id="birth_time" required placeholder="02:26" oninput="handleTimeInputChange()"
+                <input type="text" id="birth_time" required placeholder="02:26" autocomplete="off" oninput="handleTimeInputChange()"
                   onblur="formatTimeInputOnBlur()" class="clay-input w-full px-4 py-4 text-base pr-9 font-medium">
                 <button type="button" onclick="clearBirthTime()"
                   class="absolute right-3 top-4 text-slate-400 hover:text-rose-400 transition-colors"
@@ -711,7 +711,7 @@
             </label>
             <div class="relative">
               <input type="text" id="birthplace_name" required placeholder="e.g. London, United Kingdom or Tokyo, Japan"
-                oninput="handleBirthplaceInput()" class="clay-input w-full px-5 py-4 text-base pl-12">
+                autocomplete="off" oninput="handleBirthplaceInput()" class="clay-input w-full px-5 py-4 text-base pl-12">
               <i data-lucide="map-pin" class="w-5 h-5 text-slate-400 absolute left-4 top-4"></i>
 
             </div>
@@ -732,7 +732,7 @@
             <div class="flex gap-2">
               <div class="relative flex-1">
                 <input type="text" inputmode="decimal" id="latitude" required placeholder="e.g. 51.5074"
-                  oninput="handleLatInputChange()" class="clay-input w-full px-4 py-4 text-base font-medium">
+                  autocomplete="off" oninput="handleLatInputChange()" class="clay-input w-full px-4 py-4 text-base font-medium">
 
               </div>
               <select id="latitude_dir"
@@ -752,7 +752,7 @@
             <div class="flex gap-2">
               <div class="relative flex-1">
                 <input type="text" inputmode="decimal" id="longitude" required placeholder="e.g. 0.1278"
-                  oninput="handleLonInputChange()" class="clay-input w-full px-4 py-4 text-base font-medium">
+                  autocomplete="off" oninput="handleLonInputChange()" class="clay-input w-full px-4 py-4 text-base font-medium">
 
               </div>
               <select id="longitude_dir"
@@ -967,16 +967,28 @@
 
       <!-- TAB 3: CHRONOLOGY & TIMING -->
       <div id="tab-chronology" class="clay-card p-8 sm:p-12 space-y-7 hidden">
-        <div class="flex items-center gap-4 border-b border-slate-700/60 pb-5">
-          <div class="w-12 h-12 rounded-2xl bg-purple-500/20 text-purple-400 flex items-center justify-center">
-            <i data-lucide="hourglass" class="w-6 h-6"></i>
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-700/60 pb-5">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-2xl bg-purple-500/20 text-purple-400 flex items-center justify-center">
+              <i data-lucide="hourglass" class="w-6 h-6"></i>
+            </div>
+            <div>
+              <h3 class="font-tarot text-2xl font-bold text-purple-200">Active Multi-System Timing Window</h3>
+              <p class="text-sm text-slate-400">Harmonizing Vimshottari Mahadasha, BaZi Da Yun, and Western Annual
+                Profections.</p>
+            </div>
           </div>
-          <div>
-            <h3 class="font-tarot text-2xl font-bold text-purple-200">Active Multi-System Timing Window</h3>
-            <p class="text-sm text-slate-400">Harmonizing Vimshottari Mahadasha, BaZi Da Yun, and Western Annual
-              Profections.</p>
+          <div class="flex items-center gap-3">
+            <button onclick="generateAIChronology()" id="btn-generate-chronology-ai"
+              class="clay-button-primary px-5 py-3 text-sm font-bold flex items-center gap-2 shadow-lg shadow-purple-950/50 hover:scale-[1.02] active:scale-[0.98] transition-all">
+              <i data-lucide="sparkles" class="w-4 h-4 text-amber-300"></i>
+              <span id="btn-generate-chronology-text">Generate with AI</span>
+            </button>
           </div>
         </div>
+
+        <!-- Dynamic AI Chronology Container (API Driven) -->
+        <div id="ai-chronology-container" class="hidden"></div>
 
         <div id="chronology-highlight" class="clay-card-gold p-7 rounded-3xl space-y-3.5"></div>
 
@@ -1157,7 +1169,9 @@
 
         <!-- Chat Input Form -->
         <form onsubmit="handleSendAIQuestion(event)" class="flex gap-4">
-          <input type="text" id="ai-user-query" placeholder="Ask anything about your six-culture chart..."
+          <input type="text" id="ai-user-query"
+            value="Predict my detailed upcoming timeline and life events based on my cross-tradition planetary positions and active timing cycles."
+            placeholder="Ask anything about your six-culture chart..."
             class="clay-input flex-1 px-5 py-4 text-base">
           <button type="submit" id="btn-send-ai"
             class="clay-button-primary px-8 py-4 text-base font-bold flex items-center gap-2">
@@ -1272,10 +1286,92 @@
   <!-- ===================================================================== -->
   <script>
     let currentChartData = null;
+    window['lastChronologyAIReply'] = null;
+    window['ai_replies'] = {};
+
+    // Purge cached past details and non-AI storage on page reload/navigation
+    function purgeAllPastMemoryExceptAI() {
+      try {
+        const aiKeys = [
+          'astrocheck_ai_provider',
+          'astrocheck_ai_model',
+          'astrocheck_ai_key',
+          'astrocheck_ai_custom_endpoint'
+        ];
+        const preserved = {};
+        aiKeys.forEach(k => {
+          const val = localStorage.getItem(k);
+          if (val !== null && val !== undefined) {
+            preserved[k] = val;
+          }
+        });
+
+        localStorage.clear();
+        sessionStorage.clear();
+
+        Object.entries(preserved).forEach(([k, v]) => {
+          localStorage.setItem(k, v);
+        });
+      } catch (e) {
+        console.warn("Storage purge warning:", e);
+      }
+    }
+
+    // Reset all form inputs and hide results so fresh reload is 100% clean
+    function resetAllChartAndFormState() {
+      currentChartData = null;
+      window['lastChronologyAIReply'] = null;
+      window['ai_replies'] = {};
+
+      const natalForm = document.getElementById('natal-form');
+      if (natalForm) natalForm.reset();
+
+      ['birth_date', 'birth_time', 'birthplace_name', 'latitude', 'longitude', 'current_residence'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+      });
+
+      const resultsContainer = document.getElementById('results-container');
+      if (resultsContainer) resultsContainer.classList.add('hidden');
+
+      ['chronology-highlight', 'timing-clocks-grid', 'strengths-list', 'weaknesses-list', 'timeline-table-body', 'retrospective-table-body', 'dossier-preview'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = '';
+      });
+
+      const aiChrono = document.getElementById('ai-chronology-container');
+      if (aiChrono) {
+        aiChrono.classList.add('hidden');
+        aiChrono.innerHTML = '';
+      }
+      const btnChronoText = document.getElementById('btn-generate-chronology-text');
+      if (btnChronoText) btnChronoText.innerText = 'Generate with AI';
+
+      const qInput = document.getElementById('ai-user-query');
+      if (qInput) {
+        qInput.value = "Predict my detailed upcoming timeline and life events based on my cross-tradition planetary positions and active timing cycles.";
+      }
+    }
+
+    // Run purge immediately on script parse
+    purgeAllPastMemoryExceptAI();
 
     document.addEventListener("DOMContentLoaded", () => {
+      purgeAllPastMemoryExceptAI();
+      resetAllChartAndFormState();
       lucide.createIcons();
       loadSavedAISettings();
+    });
+
+    window.addEventListener('pageshow', (event) => {
+      // Handles BFCache (back/forward or browser restored state)
+      purgeAllPastMemoryExceptAI();
+      resetAllChartAndFormState();
+      loadSavedAISettings();
+    });
+
+    window.addEventListener('beforeunload', () => {
+      purgeAllPastMemoryExceptAI();
     });
 
     // Clear and Delete location/time helpers
@@ -1730,6 +1826,16 @@
 
       // Render Results into UI
       function renderResults(data) {
+        // Reset AI Chronology container for fresh chart calculation
+        window['lastChronologyAIReply'] = null;
+        const aiChrono = document.getElementById('ai-chronology-container');
+        if (aiChrono) {
+          aiChrono.classList.add('hidden');
+          aiChrono.innerHTML = '';
+        }
+        const btnChronoText = document.getElementById('btn-generate-chronology-text');
+        if (btnChronoText) btnChronoText.innerText = 'Generate with AI';
+
         // 1. Render 9-Domain Convergence Cards
         const domainGrid = document.getElementById('domain-cards-grid');
         domainGrid.innerHTML = '';
@@ -2128,100 +2234,16 @@
         if (!currentChartData) return;
         const safeDate = String(currentChartData.input.birth_date).replace(/[\/\\:]/g, '_');
         const filename = `AstroCheck_Natal_Dossier_${safeDate}.pdf`;
-
-        const prevScrollY = window.scrollY;
-
-        // Create fullscreen render overlay to ensure positive layout coordinates (fixes blank page bug)
-        const modalContainer = document.createElement('div');
-        modalContainer.id = 'pdf-render-modal';
-        modalContainer.style.position = 'fixed';
-        modalContainer.style.top = '0';
-        modalContainer.style.left = '0';
-        modalContainer.style.width = '100vw';
-        modalContainer.style.height = '100vh';
-        modalContainer.style.backgroundColor = '#070814';
-        modalContainer.style.zIndex = '999999';
-        modalContainer.style.overflowY = 'auto';
-        modalContainer.style.display = 'flex';
-        modalContainer.style.flexDirection = 'column';
-        modalContainer.style.alignItems = 'center';
-        modalContainer.style.padding = '30px 0';
-
-        const toast = document.createElement('div');
-        toast.className = 'fixed top-6 px-6 py-3 rounded-full bg-slate-900 border border-amber-400 text-amber-300 font-bold text-sm shadow-2xl flex items-center gap-3 z-[1000000]';
-        toast.innerHTML = `<div class="w-4 h-4 border-2 border-amber-400 border-t-transparent rounded-full animate-spin"></div><span>Generating Celestial Dossier PDF...</span>`;
-        document.body.appendChild(toast);
-
-        const wrap = document.createElement('div');
-        wrap.className = 'cosmic-pdf-wrap';
-        wrap.style.width = '800px';
-        wrap.style.maxWidth = '800px';
-        wrap.style.backgroundColor = '#0b0d1b';
-        wrap.style.color = '#e2e8f0';
-        wrap.style.margin = '0 auto';
-        wrap.style.boxShadow = '0 0 50px rgba(0,0,0,0.85)';
-        wrap.style.borderRadius = '8px';
-
         const input = currentChartData.input;
-        const bannerHtml = `
-          <div class="cosmic-pdf-banner">
-            <div>
-              <div class="cosmic-pdf-logo">ASTROCHECK ★ NATAL DOSSIER</div>
-              <div style="font-size: 11px; color: #94a3b8; margin-top: 4px;">
-                Subject: ${escapeHtml(input.birthplace_name || 'Verified Subject')} | DOB: ${input.birth_date} ${input.birth_time} | Sect: ${(input.sect || 'Day').toUpperCase()}
-              </div>
-            </div>
-            <div class="cosmic-pdf-badge">
-              NASA JPL DE421 VERIFIED
-            </div>
-          </div>
-        `;
+        const subtitle = `Subject: ${input.birthplace_name || 'Verified Subject'} | DOB: ${input.birth_date} ${input.birth_time} | Sect: ${(input.sect || 'Day').toUpperCase()}`;
 
-        wrap.innerHTML = bannerHtml + formatMarkdownToHTML(currentChartData.export_markdown) + `
-          <div style="border-top: 1px solid #283056; padding-top: 12px; margin-top: 24px; font-size: 9px; color: #64748b; text-align: center; display: flex; justify-content: space-between;">
-            <span>AstroCheck • Six-Culture Deterministic Verification System</span>
-            <span>Apparent Geocentric Coordinates • Chitrapaksha Lahiri Ayanamsha</span>
-          </div>
-        `;
-
-        modalContainer.appendChild(wrap);
-        document.body.appendChild(modalContainer);
-
-        window.scrollTo(0, 0);
-        modalContainer.scrollTop = 0;
-
-        await new Promise(r => setTimeout(r, 250));
-
-        const opt = {
-          margin: [8, 8, 8, 8],
-          filename: filename,
-          image: { type: 'jpeg', quality: 0.98 },
-          html2canvas: {
-            scale: 1.5,
-            useCORS: true,
-            backgroundColor: '#0b0d1b',
-            scrollY: 0,
-            scrollX: 0,
-            logging: false
-          },
-          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-          pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
-        };
-
-        try {
-          await html2pdf().from(wrap).set(opt).save();
-        } catch (e) {
-          console.error("PDF generation failed:", e);
-          alert("PDF generation failed: " + e.message);
-        } finally {
-          if (document.body.contains(toast)) {
-            document.body.removeChild(toast);
-          }
-          if (document.body.contains(modalContainer)) {
-            document.body.removeChild(modalContainer);
-          }
-          window.scrollTo(0, prevScrollY);
-        }
+        await generateCosmicPDFFromHTML({
+          title: 'ASTROCHECK ★ NATAL DOSSIER',
+          subtitle: subtitle,
+          badge: 'NASA JPL DE421 VERIFIED',
+          contentHtml: formatMarkdownToHTML(currentChartData.export_markdown),
+          filename: filename
+        });
       }
 
       // AI Settings Modal
@@ -2461,24 +2483,18 @@
         });
       }
 
-      // Download Single AI Answer in Dark Cosmic Tarot Themed PDF
-      async function downloadAIPDF(replyId) {
-        const replyText = (window['ai_replies'] && window['ai_replies'][replyId]) || '';
-        if (!replyText) return;
-
-        const btn = document.getElementById('btn-pdf-' + replyId);
+      // Generalized Cosmic PDF Generator matching Site Dark Luxury Theme
+      async function generateCosmicPDFFromHTML({ title, subtitle, badge, contentHtml, filename, btnId }) {
+        const btn = btnId ? document.getElementById(btnId) : null;
         const originalContent = btn ? btn.innerHTML : null;
         if (btn) {
           btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin text-amber-300"></i><span>Generating PDF...</span>`;
-          lucide.createIcons();
+          if (window.lucide) lucide.createIcons();
         }
 
-        const filename = `AstroCheck_AI_Oracle_Analysis_${Date.now()}.pdf`;
-
-        // 1. Save scroll position
         const prevScrollY = window.scrollY;
 
-        // 2. Create fullscreen render overlay to guarantee positive layout coordinates and zero offset
+        // Create fullscreen render overlay to guarantee positive layout coordinates & avoid blank canvas
         const modalContainer = document.createElement('div');
         modalContainer.id = 'pdf-render-modal';
         modalContainer.style.position = 'fixed';
@@ -2496,10 +2512,9 @@
 
         const toast = document.createElement('div');
         toast.className = 'fixed top-6 px-6 py-3 rounded-full bg-slate-900 border border-amber-400 text-amber-300 font-bold text-sm shadow-2xl flex items-center gap-3 z-[1000000]';
-        toast.innerHTML = `<div class="w-4 h-4 border-2 border-amber-400 border-t-transparent rounded-full animate-spin"></div><span>Generating Celestial Oracle PDF...</span>`;
+        toast.innerHTML = `<div class="w-4 h-4 border-2 border-amber-400 border-t-transparent rounded-full animate-spin"></div><span>Generating Celestial PDF Document...</span>`;
         document.body.appendChild(toast);
 
-        // 3. Create wrap inside modalContainer
         const wrap = document.createElement('div');
         wrap.className = 'cosmic-pdf-wrap';
         wrap.style.width = '800px';
@@ -2513,21 +2528,21 @@
         const bannerHtml = `
           <div class="cosmic-pdf-banner">
             <div>
-              <div class="cosmic-pdf-logo">ASTROCHECK ★ AI ORACLE ANALYSIS</div>
+              <div class="cosmic-pdf-logo">${title}</div>
               <div style="font-size: 11px; color: #94a3b8; margin-top: 4px;">
-                Master Predictive Timeline & Cross-Cultural Archetype Synthesis
+                ${subtitle}
               </div>
             </div>
             <div class="cosmic-pdf-badge">
-              SIX-CULTURE SYNTHESIS
+              ${badge || 'SIX-CULTURE SYNTHESIS'}
             </div>
           </div>
         `;
 
-        wrap.innerHTML = bannerHtml + formatMarkdownToHTML(replyText) + `
+        wrap.innerHTML = bannerHtml + contentHtml + `
           <div style="border-top: 1px solid #283056; padding-top: 12px; margin-top: 24px; font-size: 9px; color: #64748b; text-align: center; display: flex; justify-content: space-between;">
-            <span>AstroCheck AI Oracle • Six-Culture Astrological Synthesis</span>
-            <span>Symbolic Archetypes • Not Fatalistic Prophecy</span>
+            <span>AstroCheck • Six-Culture Astrological Synthesis</span>
+            <span>Symbolic Archetypes • Multi-System Timing Windows</span>
           </div>
         `;
 
@@ -2563,7 +2578,7 @@
         } finally {
           if (btn && originalContent) {
             btn.innerHTML = originalContent;
-            lucide.createIcons();
+            if (window.lucide) lucide.createIcons();
           }
           if (document.body.contains(toast)) {
             document.body.removeChild(toast);
@@ -2573,6 +2588,183 @@
           }
           window.scrollTo(0, prevScrollY);
         }
+      }
+
+      // Download Single AI Answer in Dark Cosmic Tarot Themed PDF
+      async function downloadAIPDF(replyId) {
+        const replyText = (window['ai_replies'] && window['ai_replies'][replyId]) || '';
+        if (!replyText) return;
+
+        const input = currentChartData ? currentChartData.input : {};
+        const safeDate = input.birth_date ? String(input.birth_date).replace(/[\/\\:]/g, '_') : Date.now();
+        const filename = `AstroCheck_AI_Oracle_Analysis_${safeDate}.pdf`;
+        const subtitle = input.birth_date ? `Subject: ${input.birthplace_name || 'Verified Subject'} | DOB: ${input.birth_date} ${input.birth_time || ''}` : "Master Predictive Timeline & Cross-Cultural Archetype Synthesis";
+
+        await generateCosmicPDFFromHTML({
+          title: 'ASTROCHECK ★ AI ORACLE ANALYSIS',
+          subtitle: subtitle,
+          badge: 'SIX-CULTURE SYNTHESIS',
+          contentHtml: formatMarkdownToHTML(replyText),
+          filename: filename,
+          btnId: 'btn-pdf-' + replyId
+        });
+      }
+
+      // Generate AI Chronology & Timing inside Tab 3 using AI API
+      async function generateAIChronology() {
+        if (!currentChartData) {
+          alert("Please calculate a natal chart first to generate AI Chronology.");
+          return;
+        }
+
+        const provider = localStorage.getItem('astrocheck_ai_provider') || 'gemini';
+        const model = localStorage.getItem('astrocheck_ai_model') || 'gemini-2.5-flash';
+        const key = localStorage.getItem('astrocheck_ai_key') || '';
+        const endpoint = localStorage.getItem('astrocheck_ai_custom_endpoint') || '';
+
+        if (provider !== 'custom' && (!key || key.trim().length < 5)) {
+          alert("Please configure and save your AI API Key in AI Settings first.");
+          openAISettingsModal();
+          return;
+        }
+
+        const btn = document.getElementById('btn-generate-chronology-ai');
+        const btnText = document.getElementById('btn-generate-chronology-text');
+        const originalText = btnText ? btnText.innerText : 'Generate with AI';
+
+        if (btn) btn.disabled = true;
+        if (btnText) btnText.innerText = 'Synthesizing with AI...';
+
+        const container = document.getElementById('ai-chronology-container');
+        if (container) {
+          container.classList.remove('hidden');
+          container.innerHTML = `
+            <div class="p-7 rounded-3xl bg-purple-950/40 border border-purple-500/30 text-purple-200 flex items-center gap-4 animate-pulse">
+              <div class="w-6 h-6 border-2 border-amber-400 border-t-transparent rounded-full animate-spin"></div>
+              <div>
+                <h4 class="font-tarot font-bold text-amber-300 text-base">Synthesizing Timing Forecast via AI...</h4>
+                <p class="text-xs text-slate-400">Harmonizing your planetary coordinates, dasha windows, profections, and active cycle interactions across all six traditions.</p>
+              </div>
+            </div>
+          `;
+          container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        const chronologyPrompt = `Provide a comprehensive, actionable chronological predictive synthesis based strictly on the verified planetary positions and active timing cycles in this dossier (Vimshottari Dasha, BaZi Da Yun, Hellenistic Annual Profections, and Mayan cycles).
+
+Structure your response with:
+1. Core Psychological Profile (Personality Traits): 3 core strengths/superpowers and 3 shadow vulnerabilities/mitigations directly derived from planetary dignities and sect.
+2. Master Predictive Timeline: Year-by-year or phase-by-phase projections across Career & Professional, Love Life & Relationships, Finance & Wealth, and Health & Vitality. For each timeline phase, include a distinct 'What to Do (Inspiration & Actionable Advice)' guidance so I can take inspired action.
+3. Retrospective Timeline: Key past developmental and psychological milestones (2010–2025) reflecting the major dasha transitions and profection house shifts.
+
+Ground every insight in specific planetary positions, lords, and branch interactions without generic platitudes or fabrications.`;
+
+        try {
+          const res = await fetch('/api/ai/explain', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              provider: provider,
+              model: model,
+              api_key: key,
+              custom_endpoint: endpoint,
+              user_prompt: chronologyPrompt,
+              dossier_text: currentChartData.export_markdown
+            })
+          });
+
+          const data = await res.json();
+          if (!res.ok) {
+            throw new Error(data.detail || "AI response failed.");
+          }
+
+          window['lastChronologyAIReply'] = data.reply;
+
+          if (container) {
+            container.innerHTML = `
+              <div class="p-6 sm:p-8 rounded-3xl bg-gradient-to-b from-purple-950/60 to-slate-950/80 border border-purple-500/40 text-slate-100 shadow-2xl space-y-5">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-purple-500/30">
+                  <div>
+                    <div class="flex items-center gap-2 mb-1">
+                      <span class="text-base font-bold text-amber-300 font-tarot">🔮 AI Chronological Predictive Synthesis</span>
+                      <span class="text-xs text-slate-400 font-mono px-2 py-0.5 rounded bg-slate-900 border border-slate-800">${model}</span>
+                    </div>
+                    <p class="text-xs text-slate-400">Deep cross-cultural timing synthesis and personality profile generated from verified natal coordinates.</p>
+                  </div>
+                  <!-- Format Actions: Copiable Text Format & Download PDF Format -->
+                  <div class="flex flex-wrap items-center gap-2.5">
+                    <button onclick="copyChronologyAIText()" id="btn-copy-chronology-text"
+                      class="px-4 py-2.5 rounded-xl bg-purple-500/20 hover:bg-purple-500/30 text-purple-200 border border-purple-500/40 text-xs font-bold flex items-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98]">
+                      <i data-lucide="copy" class="w-4 h-4"></i>
+                      <span>Copy Text Format</span>
+                    </button>
+                    <button onclick="downloadChronologyAIPDF()" id="btn-pdf-chronology-ai"
+                      class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500/25 to-purple-600/25 hover:from-amber-500/40 hover:to-purple-600/40 text-amber-200 border border-amber-400/50 text-xs font-bold flex items-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-md shadow-amber-950/40">
+                      <i data-lucide="file-text" class="w-4 h-4 text-amber-300"></i>
+                      <span>Download PDF Format</span>
+                    </button>
+                  </div>
+                </div>
+                <div class="tarot-markdown-body text-sm leading-relaxed">${formatMarkdownToHTML(data.reply)}</div>
+              </div>
+            `;
+            if (window.lucide) lucide.createIcons();
+          }
+
+          if (btnText) btnText.innerText = 'Regenerate with AI';
+
+        } catch (err) {
+          if (container) {
+            container.innerHTML = `
+              <div class="p-5 rounded-3xl bg-rose-950/40 border border-rose-500/30 text-rose-300 text-sm">
+                <strong>Error generating AI Chronology:</strong> ${err.message}
+              </div>
+            `;
+          }
+          if (btnText) btnText.innerText = originalText;
+        } finally {
+          if (btn) btn.disabled = false;
+          if (window.lucide) lucide.createIcons();
+        }
+      }
+
+      // Copy Chronology AI Output
+      function copyChronologyAIText() {
+        const replyText = window['lastChronologyAIReply'];
+        if (!replyText) return;
+        navigator.clipboard.writeText(replyText).then(() => {
+          const btn = document.getElementById('btn-copy-chronology-text');
+          if (btn) {
+            const orig = btn.innerHTML;
+            btn.innerHTML = `<i data-lucide="check" class="w-3.5 h-3.5 text-emerald-300"></i><span>✓ Copied!</span>`;
+            if (window.lucide) lucide.createIcons();
+            setTimeout(() => { btn.innerHTML = orig; if (window.lucide) lucide.createIcons(); }, 2500);
+          }
+        }).catch(err => {
+          alert("Failed to copy text: " + err);
+        });
+      }
+
+      // Download Chronology AI Output in Dark Cosmic PDF
+      async function downloadChronologyAIPDF() {
+        const replyText = window['lastChronologyAIReply'];
+        if (!replyText) {
+          alert("Please generate the AI Chronology first.");
+          return;
+        }
+        const input = currentChartData ? currentChartData.input : {};
+        const safeDate = input.birth_date ? String(input.birth_date).replace(/[\/\\:]/g, '_') : Date.now();
+        const filename = `AstroCheck_AI_Chronology_Timing_${safeDate}.pdf`;
+        const subjectLine = `Subject: ${input.birthplace_name || 'Verified Subject'} | DOB: ${input.birth_date || 'N/A'} ${input.birth_time || ''} | Sect: ${(input.sect || 'Day').toUpperCase()}`;
+
+        await generateCosmicPDFFromHTML({
+          title: 'ASTROCHECK ★ AI CHRONOLOGY & PREDICTIVE TIMING',
+          subtitle: subjectLine,
+          badge: 'MULTI-SYSTEM TIMING',
+          contentHtml: formatMarkdownToHTML(replyText),
+          filename: filename,
+          btnId: 'btn-pdf-chronology-ai'
+        });
       }
 
       // Comprehensive Markdown to Tarot Cosmic HTML Parser
