@@ -63,6 +63,33 @@ Visit either of the following local URLs:
 
 ---
 
+## 🌐 1-Click Cloud Deployment
+
+Deploy your own live public instance of AstroCheck:
+
+### Option A: Render (Free Web Service)
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/Beeshrm76/AstroCheck)
+
+1. Click the **Deploy to Render** button above (or sign in to [render.com](https://render.com) and click **New > Web Service**).
+2. Select repository `Beeshrm76/AstroCheck`.
+3. Render automatically detects `render.yaml` and deploys your service.
+4. Your free public URL (e.g. `https://astrocheck.onrender.com`) is live in ~2 minutes with automatic HTTPS.
+
+### Option B: Railway
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/new)
+
+1. Sign in to [railway.app](https://railway.app/new) and select **Deploy from GitHub repo**.
+2. Select `Beeshrm76/AstroCheck`. Railway automatically uses the `Dockerfile`.
+3. Go to **Settings > Networking** and click **Generate Domain** for your public URL.
+
+### Option C: Docker Container
+```bash
+docker build -t astrocheck .
+docker run -d -p 8000:8000 astrocheck
+```
+
+---
+
 ## 🎨 Features & Architecture
 
 ### 1. Playful 3D Claymorphism & Tarot Celestial Aesthetic
